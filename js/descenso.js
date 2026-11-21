@@ -385,7 +385,7 @@
     function regreso() {
       const hacer = () => {
         raiz.classList.add('regreso');
-        raiz.style.setProperty('--figura-fondo', '1');
+        LB.casaDeNoche();
         const verbo = document.querySelector('.titulo-hero .verbo');
         if (verbo) verbo.textContent = 'estaba';
         LB.titulos[1] = 'Residencial Las Brumas · Tu nuevo hogar te estaba esperando';

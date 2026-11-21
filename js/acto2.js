@@ -258,14 +258,10 @@
     requestAnimationFrame(pintar);
   }
 
-  /* La asesora cambia de cara según el acto */
+  /* La asesora saluda al entrar en el acto 2 (su cara se apaga en el CSS según el acto) */
   function asesora() {
-    const hueco = document.getElementById('asesora-cara');
     let primera = true;
     LB.alCambiarActo((n) => {
-      const extra = n >= 3 ? { sonrisa: 1.3, vacio: n >= 4 } : n === 2 ? { sonrisa: 0.8 } : {};
-      hueco.innerHTML = LB.caras.retrato('marta', extra);
-      LB.caras.parpadear(hueco.firstElementChild, 0.8);
       if (n === 2 && primera) {
         primera = false;
         if (Date.now() - LB.t0 > 20000) setTimeout(() => LB.marta('acto2', {}, { urgente: true }), 1200);

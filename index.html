@@ -17,10 +17,6 @@
 <body>
 <a class="saltar" href="#reserva">Saltar a la reserva</a>
 
-<svg class="sprite" aria-hidden="true" focusable="false">
-  <symbol id="pino" viewBox="0 0 40 100"><path d="M20 0 L34 34 H27 L38 62 H29 L40 92 H22 V100 H18 V92 H0 L11 62 H2 L13 34 H6Z"/></symbol>
-</svg>
-
 <main id="principal">
 
 <!-- ACTO 1 · La promoción -->
@@ -32,7 +28,10 @@
         <div class="tarjeta">
           <div class="toldo" aria-hidden="true"></div>
           <p class="marca"><span>Residencial</span> Las Brumas</p>
-          <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+          <div class="escenario-movil foto-casa">
+            <img class="foto-dia" src="img/casa-dia.webp" alt="La casa piloto de día: fachada blanca con un lateral de madera, pinos alrededor, el mar de nubes al fondo y un cartel en el césped que dice «Casa piloto 14»." width="1024" height="1536" fetchpriority="high">
+            <img class="foto-noche" src="img/casa-noche.webp" alt="La misma casa al anochecer, entre la niebla: una luz encendida arriba y la puerta entreabierta. Entre los pinos de la izquierda hay alguien muy alto, de pie, mirando hacia la casa." aria-hidden="true" width="1024" height="1536" loading="lazy" decoding="async">
+          </div>
           <h1 id="titulo-hero" class="titulo-hero">Tu nuevo hogar te <span class="verbo">está</span> esperando.</h1>
           <p class="entrada">Treinta y dos casas en las medianías, a 900 metros, justo encima del mar de nubes. Entrega de llaves en primavera, como cada año.</p>
           <a class="boton" href="#reserva">Reserva tu visita</a>
@@ -86,19 +85,29 @@
         </dl>
       </section>
 
-      <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+      <div class="escenario-movil">
+        <img src="img/mirador.webp" alt="Un mirador de madera sobre el mar de nubes, con el Teide al fondo al atardecer. En uno de los bancos hay unos zapatos colocados, uno junto al otro." width="1536" height="1024" class="foto-mirador" loading="lazy" decoding="async">
+      </div>
 
       <section class="galeria" id="galeria" aria-labelledby="titulo-galeria">
         <h2 id="titulo-galeria" data-entra>Pasea por la casa piloto</h2>
         <p class="nota" data-entra>Amueblada y lista para entrar a vivir: todo lo que ves se queda con la casa. Toca la imagen para pasar a la siguiente.</p>
-        <button class="marco" type="button" aria-label="Siguiente estancia de la casa piloto" data-entra>
-          <span class="estancias" id="estancias"></span>
+        <button class="marco" type="button" aria-label="Siguiente estancia de la casa piloto" aria-describedby="pie-marco" data-entra>
+          <span class="estancias" id="estancias">
+            <img class="activa" src="img/salon.webp" data-pie="Salón · luz de mañana" alt="Salón comedor luminoso: sofá claro, mesa de madera para seis y la cocina abierta al fondo, con ventanales al pinar." width="1536" height="1024" loading="lazy" decoding="async">
+            <img src="img/cocina.webp" data-pie="Cocina · equipada" alt="Cocina con la mesa puesta para el desayuno. Una de las sillas es mucho más alta que las demás y la nevera está llena de dibujos de niños." width="1536" height="1024" loading="lazy" decoding="async">
+            <img src="img/cuarto.webp" data-pie="Cuarto de los niños" alt="Cuarto infantil con dos camas y peluches. En el marco de la puerta, las marcas de altura de los niños suben casi hasta el techo." width="1536" height="1024" loading="lazy" decoding="async">
+            <img class="foto-bano" src="img/bano.webp" data-pie="Baño completo" alt="Baño con lavabo sobre un mueble de madera y un vaso con muchísimos cepillos de dientes. En el espejo redondo se ve el pasillo, a oscuras." width="1024" height="1536" loading="lazy" decoding="async">
+            <img src="img/pasillo-dia.webp" data-pie="Pasillo · planta alta" alt="El pasillo de la planta alta, blanco y larguísimo, con puertas a los dos lados. La del fondo es de madera oscura." width="1024" height="1536" loading="lazy" decoding="async">
+          </span>
         </button>
         <p class="pie-marco" id="pie-marco">Salón · luz de mañana</p>
       </section>
 
       <section class="opinion" id="opinion" aria-label="Lo que dice una vecina">
-        <div class="retrato" id="retrato" data-entra></div>
+        <div class="retrato" data-entra>
+          <img src="img/marta.webp" alt="Marta, de pie en el porche de su casa: pelo oscuro recogido, chaqueta de punto clara y una sonrisa amplia." width="1254" height="1254" loading="lazy" decoding="async">
+        </div>
         <blockquote data-entra>
           <p>Llegamos en marzo con dos maletas y ya no nos queremos ir. Aquí no nos falta de nada.</p>
           <footer>Marta, casa 14 · vecina desde 1987</footer>
@@ -126,7 +135,9 @@
         </div>
       </section>
 
-      <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+      <div class="escenario-movil">
+        <img src="img/piscina.webp" alt="La piscina climatizada del club social, con tumbonas y grandes ventanales que dan al pinar y al mar de nubes." width="1536" height="1024" class="foto-piscina" loading="lazy" decoding="async">
+      </div>
 
       <section class="preguntas" id="preguntas" aria-labelledby="titulo-preguntas">
         <h2 id="titulo-preguntas" data-entra>Preguntas frecuentes</h2>
@@ -160,85 +171,20 @@
 
     </div>
 
-    <div class="escenario" aria-hidden="true">
-      <svg class="casa" id="casa" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
-        <rect class="c-cielo" width="600" height="800"/>
-        <circle class="c-astro" cx="455" cy="165" r="44"/>
-        <path class="c-monte" d="M0 410 L70 372 L150 392 L235 330 L320 365 L400 318 L480 356 L560 326 L600 342 V800 H0Z"/>
-        <g class="c-niebla c-niebla-a">
-          <rect x="-140" y="362" width="420" height="40" rx="20"/>
-          <rect x="250" y="386" width="520" height="36" rx="18"/>
-          <rect x="-60" y="414" width="380" height="28" rx="14"/>
-        </g>
-        <g class="c-pinos-lejos">
-          <use href="#pino" x="-8" y="378" width="30" height="78"/>
-          <use href="#pino" x="20" y="392" width="26" height="66"/>
-          <use href="#pino" x="46" y="370" width="32" height="88"/>
-          <use href="#pino" x="78" y="396" width="24" height="62"/>
-          <use href="#pino" x="104" y="384" width="30" height="76"/>
-          <use href="#pino" x="140" y="400" width="24" height="60"/>
-          <use href="#pino" x="430" y="388" width="28" height="72"/>
-          <use href="#pino" x="458" y="374" width="32" height="86"/>
-          <use href="#pino" x="494" y="394" width="26" height="66"/>
-          <use href="#pino" x="520" y="380" width="30" height="80"/>
-          <use href="#pino" x="552" y="392" width="28" height="70"/>
-          <use href="#pino" x="578" y="378" width="30" height="82"/>
-        </g>
-        <g class="c-figura-fondo" transform="rotate(-9 134 452)">
-          <ellipse cx="134" cy="452" rx="7.5" ry="10"/>
-          <path d="M130 462 H138 L142 504 L146 598 H141 L136 520 L133 598 H128 L126 504Z"/>
-          <path d="M127 470 L119 530 L115 586 L118 587 L124 532 L131 478Z"/>
-          <path d="M141 470 L149 530 L153 586 L150 587 L144 532 L137 478Z"/>
-        </g>
-        <path class="c-cesped" d="M0 598 C150 580 420 576 600 596 V800 H0Z"/>
-        <g class="c-casa">
-          <rect class="c-muro" x="170" y="440" width="290" height="240"/>
-          <rect class="c-madera" x="345" y="446" width="115" height="234"/>
-          <path class="c-listones" d="M357 446 V680 M369 446 V680 M381 446 V680 M393 446 V680 M405 446 V680 M417 446 V680 M429 446 V680 M441 446 V680 M453 446 V680"/>
-          <polygon class="c-tejado" points="148,452 315,330 482,452"/>
-          <polygon class="c-muro" points="188,448 315,356 442,448"/>
-          <circle class="c-ventana c-buhardilla" cx="315" cy="410" r="15"/>
-          <rect class="c-ventana c-ventana-alta" x="196" y="470" width="120" height="82"/>
-          <g class="c-fig-ventana">
-            <ellipse cx="282" cy="494" rx="9" ry="11"/>
-            <path d="M268 552 C268 520 274 506 282 506 C290 506 296 520 296 552Z"/>
-          </g>
-          <rect class="c-cortina" x="196" y="470" width="32" height="82"/>
-          <rect class="c-ventana c-luz" x="372" y="478" width="62" height="66"/>
-          <rect class="c-ventana" x="192" y="585" width="128" height="95"/>
-          <path class="c-carpinteria" d="M235 585 V680 M278 585 V680 M256 470 V552"/>
-          <rect class="c-hueco" x="372" y="590" width="56" height="90"/>
-          <rect class="c-puerta" x="372" y="590" width="56" height="90"/>
-          <rect class="c-placa" x="436" y="600" width="18" height="13"/>
-          <text class="c-numero" x="445" y="610.5" text-anchor="middle">14</text>
-          <rect class="c-tejado" x="449" y="456" width="10" height="5"/>
-          <circle class="c-camara" cx="454" cy="466" r="6"/>
-          <circle class="c-led" cx="454" cy="467" r="1.6"/>
-          <polygon class="c-camino" points="380,680 420,680 470,800 330,800"/>
-        </g>
-        <rect class="c-seto" x="-10" y="660" width="176" height="26" rx="13"/>
-        <rect class="c-seto" x="468" y="662" width="150" height="26" rx="13"/>
-        <g class="c-pinos-cerca">
-          <use href="#pino" x="-70" y="230" width="170" height="430"/>
-          <use href="#pino" x="-20" y="420" width="90" height="250"/>
-          <use href="#pino" x="476" y="270" width="160" height="400"/>
-          <use href="#pino" x="532" y="410" width="90" height="250"/>
-        </g>
-        <g class="c-cartel">
-          <rect class="c-poste" x="96" y="700" width="5" height="70"/>
-          <rect class="c-tabla" x="40" y="688" width="118" height="40"/>
-          <text class="c-texto-cartel" x="99" y="713" text-anchor="middle">Casa piloto 14</text>
-        </g>
-        <g class="c-niebla c-niebla-b">
-          <rect x="-200" y="724" width="520" height="40" rx="20"/>
-          <rect x="300" y="750" width="560" height="44" rx="22"/>
-        </g>
-      </svg>
+    <div class="escenario" id="escenario" data-vista="casa">
+      <div class="vista vista-casa foto-casa">
+        <img class="foto-dia" src="img/casa-dia.webp" alt="La casa piloto de día: fachada blanca con un lateral de madera, pinos alrededor, el mar de nubes al fondo y un cartel en el césped que dice «Casa piloto 14»." width="1024" height="1536" fetchpriority="high">
+        <img class="foto-noche" src="img/casa-noche.webp" alt="La misma casa al anochecer, entre la niebla: una luz encendida arriba y la puerta entreabierta. Entre los pinos de la izquierda hay alguien muy alto, de pie, mirando hacia la casa." aria-hidden="true" width="1024" height="1536" loading="lazy" decoding="async">
+      </div>
+      <img class="vista vista-mirador foto-mirador" src="img/mirador.webp" alt="Un mirador de madera sobre el mar de nubes, con el Teide al fondo al atardecer. En uno de los bancos hay unos zapatos colocados, uno junto al otro." width="1536" height="1024" loading="lazy" decoding="async">
+      <img class="vista vista-piscina foto-piscina" src="img/piscina.webp" alt="La piscina climatizada del club social, con tumbonas y grandes ventanales que dan al pinar y al mar de nubes." width="1536" height="1024" loading="lazy" decoding="async">
     </div>
   </div>
 
   <footer class="pie" aria-label="Pie de la promoción">
-    <div class="pie-foto" data-clon="ventana" aria-hidden="true"></div>
+    <div class="pie-foto">
+      <img src="img/calle.webp" alt="La calle de la urbanización al anochecer, con niebla y las farolas encendidas. Los vecinos están de pie delante de sus casas, quietos, mirando hacia aquí." width="1536" height="1024" loading="lazy" decoding="async">
+    </div>
     <div class="pie-menu">
       <p class="marca"><span>Residencial</span> Las Brumas</p>
       <nav aria-label="Pie">
@@ -407,7 +353,7 @@
 <div class="grano" aria-hidden="true"></div>
 
 <aside class="asesora" id="asesora" aria-live="polite" hidden>
-  <div class="asesora-cara" id="asesora-cara" aria-hidden="true"></div>
+  <div class="asesora-cara" aria-hidden="true"><img src="img/marta.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async"></div>
   <div class="asesora-texto">
     <p class="asesora-nombre">Marta · asesora de ventas</p>
     <p class="asesora-mensaje" id="asesora-mensaje"></p>

@@ -166,16 +166,30 @@
   const recarga = !!previa && previa.acto >= 2 && (tipoCarga === 'reload' || !nueva);
   const vuelve = !!previa && (new Date(previa.ultima).toDateString() !== new Date().toDateString() || ahora - previa.ultima > 6 * 3600e3);
 
+  /* Fotos: pedir y descodificar antes de que hagan falta, para que el cambio no se vea cargando */
+  function precargar(cual) {
+    const lista = typeof cual === 'string' ? document.querySelectorAll(cual) : cual;
+    lista.forEach(img => {
+      if (img.loading === 'lazy') img.loading = 'eager';
+      if (img.decode) img.decode().catch(() => { /* ya se verá al cargar */ });
+    });
+  }
+  /* La casa de la portada, de noche: en la visita de vuelta y al volver arriba después del final */
+  function casaDeNoche() {
+    document.querySelectorAll('.foto-dia').forEach(i => i.setAttribute('aria-hidden', 'true'));
+    document.querySelectorAll('.foto-noche').forEach(i => i.removeAttribute('aria-hidden'));
+    precargar('.foto-noche');
+  }
+
   if (vuelve) {
     raiz.classList.add('vuelve');
-    raiz.style.setProperty('--abre', '0.78');
-    raiz.style.setProperty('--luz', '#f0cf8a');
+    casaDeNoche();
   }
 
   window.LB = {
     raiz, calma, tactil, t0, clamp, lerp, azar, tramo, dos, puntero, avisa,
     hora, las, sonLas, duracion, tiempoDentro, minutos, veces,
-    titulos, fijarActo, avisar, marta, icono, marcarFinal,
+    titulos, fijarActo, avisar, marta, icono, marcarFinal, precargar, casaDeNoche,
     visitas, previa, nueva, recarga, vuelve,
     get acto() { return acto; },
     get velocidad() { return velocidad; },
