@@ -394,7 +394,7 @@
         LB.fijarActo(1);
         document.title = LB.titulos[1];
         ScrollTrigger.update();
-        setTimeout(() => { if (LB.acto === 1) LB.marta('regreso', {}, { urgente: true }); }, 2600);
+        setTimeout(() => LB.marta('regreso', {}, { urgente: true, soloActo: 1 }), 2600);
       };
       if (calma) { hacer(); document.getElementById('titulo-hero').focus({ preventScroll: true }); return; }
       velo.classList.add('cubre');

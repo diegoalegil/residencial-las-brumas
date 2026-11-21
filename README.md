@@ -19,9 +19,9 @@ Residencial Las Brumas es una ficción. Ninguna casa, persona ni empresa de esta
 
 ## Privacidad
 
-La web no pide permisos, no usa cookies y no envía nada a ningún sitio. Lo que dice de ti lo lee tu propio navegador en ese momento, sin preguntarte, y no sale de él: la hora y la zona horaria, el tipo de aparato y de navegador, el tamaño de la pantalla, si tienes el modo oscuro, la batería (solo en los navegadores que la dan sin pedir permiso), la página desde la que llegaste, si cambias de pestaña, cómo haces scroll o mueves el ratón y el tiempo que llevas dentro.
+La web no pide permisos, no usa cookies y no envía nada tuyo a ningún sitio. Lo que dice de ti lo lee tu propio navegador en ese momento, sin preguntarte, y no sale de él: la hora y la zona horaria, el idioma del navegador, el tipo de aparato y de navegador, el tamaño de la pantalla, si tienes el modo oscuro o la reducción de movimiento, la batería (solo en los navegadores que la dan sin pedir permiso), la página desde la que llegaste, si cambias de pestaña, si haces la ventana más grande o más pequeña o giras el móvil, cómo haces scroll o mueves el ratón, si lo llevas hacia las pestañas o lo dejas quieto encima de algo, si dejas el dedo quieto sobre la pantalla, el clic derecho, las teclas Ctrl/Cmd+F y Escape, si enciendes el sonido, cuántas veces cierras el aviso de Marta y el tiempo que llevas dentro.
 
-Los sonidos se descargan de la propia web, y solo si los enciendes.
+Lo único que pide fuera de la propia web es la tipografía, a Google Fonts, que como cualquier servidor ve la dirección IP desde la que se pide. Los sonidos se descargan de la propia web, y solo si los enciendes.
 
 Lo único que guarda, también en tu navegador, es cuándo viniste por primera y por última vez, cuántas veces has entrado y hasta dónde llegaste. Si copias un texto de la página, a la copia se le añade una línea; la web nunca lee lo que tienes copiado.
 

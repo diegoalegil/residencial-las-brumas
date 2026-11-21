@@ -84,9 +84,13 @@
   const texto = document.getElementById('asesora-mensaje');
   let reloj = 0, espera = 0, cerradoA = 0, desde = 0, minimo = 0, ultimoAviso = 0, cierres = 0, pendiente = null;
   const visible = () => !!caja && !caja.hidden && !caja.classList.contains('fuera');
+  /* Un mensaje con soloActo solo sale en ese acto: si le toca esperar y el acto cambia, se pierde */
+  const caducado = o => !!o && !!o.soloActo && o.soloActo !== acto;
   function avisar(msg, op = {}) {
     if (!caja || typeof msg !== 'string' || !msg.trim() || /undefined|NaN|null|\[object/.test(msg)) return false;
+    if (caducado(op)) return false;
     if (!op.urgente && Date.now() - cerradoA < 4000) return false;
+    if (pendiente && caducado(pendiente[1])) pendiente = null;
     if (visible()) {
       if (op.urgente || !pendiente) pendiente = [msg, op];
       clearTimeout(espera);
@@ -99,6 +103,7 @@
   function sacar() {
     if (!pendiente) return;
     const [m, o] = pendiente;
+    if (caducado(o)) { pendiente = null; return; }
     if (visible() && (!o.urgente || Date.now() - desde < minimo)) return;
     pendiente = null;
     mostrar(m, o);

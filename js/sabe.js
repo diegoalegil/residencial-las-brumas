@@ -56,15 +56,20 @@
     'America/Caracas': 'Caracas', 'America/Montevideo': 'Montevideo', 'America/Havana': 'La Habana', 'America/Panama': 'Panamá',
     'America/Guatemala': 'Guatemala', 'America/Asuncion': 'Asunción', 'America/La_Paz': 'La Paz', 'America/Santo_Domingo': 'Santo Domingo',
     'America/Puerto_Rico': 'Puerto Rico', 'America/Costa_Rica': 'Costa Rica', 'America/El_Salvador': 'El Salvador',
-    'America/Tegucigalpa': 'Tegucigalpa', 'America/Managua': 'Managua', 'America/Guayaquil': 'Guayaquil'
+    'America/Tegucigalpa': 'Tegucigalpa', 'America/Managua': 'Managua', 'America/Guayaquil': 'Guayaquil',
+    'America/Argentina/Cordoba': 'Córdoba', 'America/Argentina/Mendoza': 'Mendoza', 'America/Sao_Paulo': 'São Paulo',
+    'America/Monterrey': 'Monterrey', 'America/Cancun': 'Cancún', 'America/Tijuana': 'Tijuana', 'America/Chicago': 'Chicago',
+    'America/Toronto': 'Toronto', 'Europe/Vienna': 'Viena', 'Europe/Prague': 'Praga', 'Europe/Warsaw': 'Varsovia',
+    'Europe/Copenhagen': 'Copenhague', 'Europe/Stockholm': 'Estocolmo', 'Europe/Oslo': 'Oslo', 'Europe/Helsinki': 'Helsinki',
+    'Europe/Athens': 'Atenas', 'Europe/Bucharest': 'Bucarest', 'Europe/Istanbul': 'Estambul', 'Europe/Moscow': 'Moscú',
+    'Africa/Casablanca': 'Casablanca', 'Asia/Tokyo': 'Tokio', 'Asia/Seoul': 'Seúl', 'Asia/Dubai': 'Dubái', 'Australia/Sydney': 'Sídney'
   };
+  /* Fuera de la tabla no se nombra el sitio: el identificador viene en inglés y sin tildes */
   function zona() {
     let id = '';
     try { id = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { id = ''; }
     if (!id || /^(UTC|GMT|Etc\/)/.test(id)) return null;
-    const lugar = LUGARES[id] || id.split('/').pop().replace(/_/g, ' ');
-    if (!lugar || !/[A-Za-zÀ-ÿ]/.test(lugar)) return null;
-    return { id, lugar, canarias: id === 'Atlantic/Canary', peninsula: id === 'Europe/Madrid' };
+    return { id, lugar: LUGARES[id] || null, canarias: id === 'Atlantic/Canary', peninsula: id === 'Europe/Madrid' };
   }
 
   function idioma() {
@@ -149,6 +154,7 @@
       if (!z) return cap(s) + '.';
       if (z.canarias) return `En Canarias ${s}, igual que aquí.`;
       if (z.peninsula) return `En la Península ${s}. Aquí, una menos.`;
+      if (!z.lugar) return `Tu reloj marca ${LB.las()}.`;
       return `Tu reloj va con la hora de ${z.lugar} y marca ${LB.las()}.`;
     }
   };

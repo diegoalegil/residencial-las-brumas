@@ -200,7 +200,7 @@
     retratos();
     reserva();
     entradas();
-    setTimeout(() => { if (LB.acto === 1 && !LB.regreso) LB.marta('hola'); }, 9000);
-    ScrollTrigger.create({ trigger: '#precios', start: 'top 55%', once: true, onEnter: () => { if (LB.acto === 1 && !LB.regreso) LB.marta('libre'); } });
+    setTimeout(() => { if (!LB.regreso) LB.marta('hola', {}, { soloActo: 1 }); }, 9000);
+    ScrollTrigger.create({ trigger: '#precios', start: 'top 55%', once: true, onEnter: () => { if (!LB.regreso) LB.marta('libre', {}, { soloActo: 1 }); } });
   };
 })();

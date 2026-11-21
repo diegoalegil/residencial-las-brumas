@@ -73,7 +73,8 @@
     const quien = () => {
       const como = S.como();
       const r = S.reloj();
-      return 'No nos hace falta tu nombre.' + (como ? ` Sabemos que nos miras ${como}.` : '') + ' Que ' + r.charAt(0).toLowerCase() + r.slice(1);
+      const ahi = (como ? 'Y sabemos' : 'Sabemos') + ' qué hora es ahí: ' + r.charAt(0).toLowerCase() + r.slice(1);
+      return 'No nos hace falta tu nombre.' + (como ? ` Sabemos que nos miras ${como}.` : '') + ' ' + ahi;
     };
     const cuanto = () => {
       const n = S.salidas;
