@@ -177,7 +177,7 @@
       const datos = new FormData(form);
       LB.visita = { dia: datos.get('dia'), hora: datos.get('hora') };
       conf.textContent = `Hecho. Te esperamos el ${LB.visita.dia} a las ${LB.visita.hora} en la casa piloto. No hace falta que traigas nada.`;
-      LB.avisar('Perfecto. Te estaré esperando en la puerta.', { urgente: true });
+      LB.marta('reserva', {}, { urgente: true });
     });
   }
 
@@ -200,6 +200,7 @@
     retratos();
     reserva();
     entradas();
-    setTimeout(() => { if (LB.acto === 1) LB.avisar('Hola, soy Marta. Si quieres ver la casa piloto, esta semana tengo huecos.'); }, 9000);
+    setTimeout(() => { if (LB.acto === 1 && !LB.regreso) LB.marta('hola'); }, 9000);
+    ScrollTrigger.create({ trigger: '#precios', start: 'top 55%', once: true, onEnter: () => { if (LB.acto === 1 && !LB.regreso) LB.marta('libre'); } });
   };
 })();

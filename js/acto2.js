@@ -34,7 +34,16 @@
     }, 1100);
   }
 
-  /* Siete reseñas: la misma cara, la misma frase, fechas que todavía no han llegado */
+  /* Siete reseñas: la misma cara, la misma frase que se va torciendo, fechas que todavía no han llegado */
+  const RESENAS = [
+    'Aquí somos muy felices. No queremos irnos nunca.',
+    'Aquí somos muy felices. No queremos irnos nunca.',
+    'Aquí somos muy felices. No queremos irnos.',
+    'Aquí somos muy felices. No podemos irnos.',
+    'Aquí somos muy felices. No nos dejan irnos.',
+    'Aquí somos muy felices. Aquí somos muy felices. Aquí somos',
+    'Aquí vas a ser muy feliz. No vas a querer irte nunca.'
+  ];
   function opiniones() {
     const pista = document.getElementById('pista');
     const anio = new Date().getFullYear();
@@ -43,7 +52,7 @@
       <article class="resena">
         <div class="resena-cara">${LB.caras.retrato('marta', { sonrisa: 0.35 + i * 0.17, vacio: s === null })}</div>
         <p class="estrellas" aria-label="Cinco estrellas">★★★★★</p>
-        <blockquote><p>Aquí somos muy felices. No queremos irnos nunca.</p></blockquote>
+        <blockquote><p>${RESENAS[i]}</p></blockquote>
         <p class="firma">Marta G. · casa 14<br><time>${s === null ? '12 de marzo de —' : '12 de marzo de ' + (anio + s)}</time></p>
       </article>`).join('');
     pista.querySelectorAll('.cara').forEach(c => LB.caras.parpadear(c, 0.6));
@@ -61,7 +70,7 @@
     const ul = document.getElementById('rejilla-caras');
     const detras = document.getElementById('detras');
     const pintar = (fase2) => {
-      ul.innerHTML = VECINOS.map(([id, nombre]) => `<li><div class="vecino-cara">${LB.caras.retrato(id, fase2 ? { sonrisa: 1.25 } : {})}</div><p>${nombre} · casa 14</p></li>`).join('');
+      ul.innerHTML = VECINOS.map(([id, nombre]) => `<li data-mira="vecino:${nombre}"><div class="vecino-cara">${LB.caras.retrato(id, fase2 ? { sonrisa: 1.25 } : {})}</div><p>${nombre} · casa 14</p></li>`).join('');
       ul.querySelectorAll('.cara').forEach(c => { LB.caras.parpadear(c, 0.7); if (fase2) LB.caras.mirar(c, 0, 0, true); });
     };
     pintar(false);
@@ -85,7 +94,7 @@
           fase2 = quiere;
           pintar(fase2);
           detras.classList.toggle('visible', fase2);
-          if (fase2) LB.avisar('No te des la vuelta.', { urgente: true, dura: 5000 });
+          if (fase2) LB.marta('detras', {}, { urgente: true, dura: 5000 });
         }
       }
     });
@@ -123,8 +132,20 @@
     addEventListener('scroll', () => { if (tactil || !LB.puntero.movido) mover(innerWidth / 2, innerHeight * 0.9); }, { passive: true });
   }
 
-  /* Circuito cerrado: cuatro cámaras, una te enfoca a ti */
-  const ruido = [], ETIQUETAS = { pinar: 'CAM 03 · PINAR', salon: 'CAM 07 · CASA 14 · SALÓN', entrada: 'CAM 12 · ENTRADA', tu: 'CAM 64 · TÚ' };
+  /* Circuito cerrado: cuatro cámaras, una te enfoca a ti. Los rótulos de la 64 son tuyos y van en directo. */
+  const ruido = [];
+  function rotulos(tipo, t) {
+    if (tipo === 'pinar') return (t % 5600) < 1500 ? ['CAM 03 · PINAR', 'MOVIMIENTO'] : ['CAM 03 · PINAR'];
+    if (tipo === 'salon') return ['CAM 07 · CASA 14 · SALÓN', 'PERSONAS: 5'];
+    if (tipo === 'entrada') return ['CAM 12 · ENTRADA', 'SALIDAS HOY: 0'];
+    const S = LB.sabe, s = Math.floor((Date.now() - LB.t0) / 1000);
+    const l = ['CAM 64 · TÚ' + (S.dispositivo ? ' · ' + S.dispositivo.corto : '')];
+    let dentro = 'DENTRO ' + LB.dos(Math.floor(s / 60)) + ':' + LB.dos(s % 60);
+    if (S.bateria && (!S.bateria.cargando || S.bateria.nivel < 100)) dentro += ' · BAT ' + S.bateria.nivel + ' %';
+    l.push(dentro);
+    if (LB.quieto > 3000) l.push('SIN MOVIMIENTO ' + Math.floor(LB.quieto / 1000) + ' S');
+    return l;
+  }
   function prepararRuido() {
     for (let k = 0; k < 4; k++) {
       const c = document.createElement('canvas'); c.width = 160; c.height = 120;
@@ -228,7 +249,7 @@
         const fs = Math.max(11, Math.round(h * 0.058));
         ctx.font = `${fs}px ui-monospace, Menlo, Consolas, monospace`;
         ctx.fillStyle = '#d9e3d6';
-        ctx.fillText(ETIQUETAS[c.tipo], fs * 0.8, fs * 1.6);
+        rotulos(c.tipo, t).forEach((r, k) => ctx.fillText(r, fs * 0.8, fs * (1.6 + k * 1.3)));
         const tw = ctx.measureText(sello).width;
         ctx.fillText(sello, w - tw - fs * 0.8, h - fs * 0.8);
         if (Math.floor(t / 1000) % 2 === 0) { ctx.fillStyle = '#c0281f'; ctx.beginPath(); ctx.arc(w - fs * 1.4, fs * 1.25, fs * 0.36, 0, Math.PI * 2); ctx.fill(); }
@@ -247,12 +268,19 @@
       LB.caras.parpadear(hueco.firstElementChild, 0.8);
       if (n === 2 && primera) {
         primera = false;
-        setTimeout(() => LB.avisar('Llevas ' + LB.tiempoDentro() + ' mirando casas. ¿Te quedas a cenar?', { urgente: true }), 1200);
+        if (Date.now() - LB.t0 > 20000) setTimeout(() => LB.marta('acto2', {}, { urgente: true }), 1200);
       }
     });
   }
 
+  /* 64 cámaras, y la 64 te graba desde que entraste */
+  function seguridad() {
+    const p = document.getElementById('seguridad-texto');
+    if (p) p.textContent = `64 cámaras. Ningún punto ciego. La 64 te graba desde ${LB.las(new Date(LB.t0))}, cuando entraste.`;
+  }
+
   LB.acto2 = function () {
+    seguridad();
     letras();
     opiniones();
     vecinos();

@@ -19,17 +19,19 @@ Residencial Las Brumas es una ficción. Ninguna casa, persona ni empresa de esta
 
 ## Privacidad
 
-La web no pide permisos, no usa cookies y no envía nada a ningún sitio. La hora, el tiempo que llevas dentro o si haces scroll muy rápido se calculan en tu propio navegador y no salen de él. Lo único que guarda, también en tu navegador, es la fecha de tu última visita.
+La web no pide permisos, no usa cookies y no envía nada a ningún sitio. Lo que dice de ti lo lee tu propio navegador en ese momento, sin preguntarte, y no sale de él: la hora y la zona horaria, el tipo de aparato y de navegador, el tamaño de la pantalla, si tienes el modo oscuro, la batería (solo en los navegadores que la dan sin pedir permiso), la página desde la que llegaste, si cambias de pestaña, cómo haces scroll o mueves el ratón y el tiempo que llevas dentro.
+
+Lo único que guarda, también en tu navegador, es cuándo viniste por primera y por última vez, cuántas veces has entrado y hasta dónde llegaste. Si copias un texto de la página, a la copia se le añade una línea; la web nunca lee lo que tienes copiado.
 
 ## Los cinco actos (destripa la historia)
 
 <details>
 <summary>Abrir solo si ya la has visto</summary>
 
-1. **La promoción.** Portada, lo que incluye la casa, cifras, la casa piloto por dentro, una vecina que la recomienda, precios, preguntas frecuentes y la reserva de la visita. Todo es creíble, salvo algún detalle que no debería estar ahí.
-2. **Algo no cuadra.** La web debería haber terminado y sigue. Las reseñas se repiten con la misma cara y fechas que todavía no han llegado, los vecinos te siguen con la mirada, nadie se ha ido nunca y las cámaras de seguridad enfocan a quien está mirando la pantalla.
-3. **Extraño de verdad.** La hora real, preguntas frecuentes que saben demasiado, notas de voz de la familia anterior, dibujos del cuarto de los niños, carteles de desaparecidos, una llamada de emergencia cortada, un contrato que se firma solo y alguien que respira contra el cristal.
-4. **Descenso.** La casa piloto a oscuras: un pasillo que se recorre con el scroll, puertas que no deberían ser tantas y algo al fondo que cada vez está más cerca.
+1. **La promoción.** Portada, lo que incluye la casa, cifras, la casa piloto por dentro, una vecina que la recomienda, precios, preguntas frecuentes y la reserva de la visita. Todo es creíble, salvo un detalle en cada sección que no debería estar ahí.
+2. **Algo no cuadra.** La web debería haber terminado y sigue. Las reseñas repiten la misma frase con la misma cara hasta que la frase se tuerce, los vecinos te siguen con la mirada, nadie se ha ido nunca y las cámaras de seguridad enfocan a quien está mirando la pantalla. Marta, la asesora, empieza a saber cosas de ti: cuánto llevas dentro, desde qué aparato miras, cuánta batería te queda, si te vas a otra pestaña o si vuelves a subir.
+3. **Extraño de verdad.** La hora real, preguntas frecuentes que contestan con tus propios datos, las notas de voz que la familia anterior nunca llegó a enviar, dibujos del cuarto de los niños, carteles de los antiguos propietarios, una llamada al 112 en la que la operadora sabe más que quien llama, un contrato que se firma solo y alguien que respira contra el cristal.
+4. **Descenso.** La casa piloto a oscuras: un pasillo que se recorre con el scroll, voces que te piden que cuentes las puertas y te dicen la hora de tu reloj, puertas que no deberían ser tantas y algo al fondo que cada vez está más cerca.
 5. **Final.** No conviene contarlo.
 
 </details>

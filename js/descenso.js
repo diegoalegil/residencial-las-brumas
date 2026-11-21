@@ -8,14 +8,18 @@
     { lado: -1, z: 11.2, ojos: true }, { lado: 1, z: 15.6 }, { lado: -1, z: 18.4 },
     { lado: 1, z: 13.0, octava: true }
   ];
+  /* Susurros: algunos dicen lo que es verdad ahora mismo (la hora, tu batería, tu mano) */
+  const S = () => LB.sabe;
   const SUSURROS = [
-    [0.07, 0.15, '¿Lo oyes?', 0.12, 0.3], [0.13, 0.21, 'cuenta las puertas', 0.66, 0.22],
-    [0.19, 0.27, 'siete', 0.2, 0.72], [0.24, 0.32, 'no corras', 0.7, 0.66],
-    [0.3, 0.38, 'te ha oído', 0.08, 0.5], [0.36, 0.44, 'ocho', 0.78, 0.4],
-    [0.41, 0.49, 'no mires al fondo', 0.3, 0.18], [0.46, 0.53, 'no respires', 0.56, 0.8],
-    [0.7, 0.78, 'no te gires', 0.1, 0.24], [0.75, 0.83, 'ya viene', 0.72, 0.74]
+    [0.07, 0.15, () => '¿Lo oyes?', 0.12, 0.3], [0.13, 0.21, () => 'cuenta las puertas', 0.66, 0.22],
+    [0.19, 0.27, () => 'siete', 0.2, 0.72],
+    [0.24, 0.32, () => { const b = S().bateria; return b && !b.cargando ? `te queda el ${b.nivel} %` : 'no corras'; }, 0.55, 0.66],
+    [0.3, 0.38, () => 'te ha oído', 0.08, 0.5], [0.36, 0.44, () => 'ocho', 0.78, 0.4],
+    [0.41, 0.49, () => LB.sonLas(), 0.3, 0.18],
+    [0.46, 0.53, () => LB.tactil ? 'no levantes el dedo' : 'quita la mano del ratón', 0.5, 0.8],
+    [0.7, 0.78, () => 'no te gires', 0.1, 0.24], [0.75, 0.83, () => 'hay sitio para ti', 0.6, 0.74]
   ];
-  const CENTRO = [[0.58, 0.635, 'Se ha ido.'], [0.6, 0.655, 'Se ha ido. Puedes respirar.'], [0.915, 1.01, 'Ya estás dentro.']];
+  const CENTRO = [[0.58, 0.635, 'Ya está.'], [0.6, 0.655, 'Ya está. Ya pasó.'], [0.915, 1.01, 'Ya estás dentro.']];
 
   let cv, ctx, w = 0, h = 0, dpr = 1;
   let Pobj = 0, P = 0, activo = false;
@@ -260,23 +264,33 @@
   /* Textos: susurros y frases en el centro */
   function textos() {
     const caja = document.getElementById('susurros');
-    caja.innerHTML = SUSURROS.map(s => `<span style="left:${s[3] * 100}%;top:${s[4] * 100}%">${s[2]}</span>`).join('');
+    caja.innerHTML = SUSURROS.map(s => `<span style="left:${s[3] * 100}%;top:${s[4] * 100}%"></span>`).join('');
     const spans = caja.querySelectorAll('span');
+    const vivos = SUSURROS.map(() => false);
     const centro = document.getElementById('centro');
     const rotulo = document.getElementById('rotulo');
+    const rotuloHora = document.getElementById('rotulo-hora');
     let ultimo = '';
     setInterval(() => {
       if (!activo) return;
       SUSURROS.forEach((s, i) => {
         const k = tramo(P, s[0], s[1]);
-        const o = k <= 0 || k >= 1 ? 0 : Math.sin(k * Math.PI);
+        const vivo = k > 0 && k < 1;
+        if (vivo && !vivos[i]) {
+          spans[i].textContent = s[2]();
+          LB.avisa('lb:susurro', { indice: i, texto: spans[i].textContent });
+        }
+        vivos[i] = vivo;
+        const o = vivo ? Math.sin(k * Math.PI) : 0;
         spans[i].style.opacity = o.toFixed(2);
         spans[i].style.transform = calma ? 'none' : `translateY(${(-k * 14).toFixed(1)}px)`;
       });
+      if (rotuloHora) { const h = LB.hora(); rotuloHora.textContent = h.slice(0, 2) === '03' ? 'En tu reloj, también.' : `En tu reloj, ${LB.las()}.`; }
       const c = CENTRO.slice().reverse().find(([a, b]) => P >= a && P < b);
       const texto = c ? c[2] : '';
       if (texto !== ultimo) {
         ultimo = texto;
+        if (texto) LB.avisa('lb:centro', { texto });
         if (texto === 'Ya estás dentro.' && !calma) {
           centro.textContent = ''; centro.classList.add('visible');
           let i = 0; const id = setInterval(() => { centro.textContent = texto.slice(0, ++i); if (i >= texto.length || ultimo !== texto) clearInterval(id); }, 110);
@@ -320,7 +334,19 @@
     const texto = document.getElementById('trampa-texto');
     const salir = document.getElementById('salir');
     const velo = document.getElementById('velo');
-    const frases = ['¿A dónde vas?', 'Ya es tarde.', 'Esta es tu casa.', 'Quédate un poco más.'];
+    const datos = document.getElementById('bienvenido-datos');
+    const frases = ['¿A dónde vas?', 'Arriba ya no queda nadie.', 'Tu plato ya está en la mesa.', 'Lucía quiere que te quedes.'];
+    const contar = () => {
+      if (!datos) return;
+      const S = LB.sabe, entrada = new Date(LB.t0), ya = new Date();
+      const n = S.salidas;
+      const horas = LB.hora(entrada) === LB.hora(ya)
+        ? `Entraste a ${LB.las(entrada)} y todavía ${LB.sonLas(ya)}. Aquí el tiempo no pasa.`
+        : `Entraste a ${LB.las(entrada)} y ya ${LB.sonLas(ya)}.`;
+      const fuera = n === 0 ? 'No te fuiste ni una vez.' : n === 1 ? 'Te fuiste una vez y volviste.' : n === 2 ? 'Te fuiste dos veces y volviste las dos.' : `Te fuiste ${LB.veces(n)} y volviste todas.`;
+      datos.textContent = horas + ' ' + fuera;
+    };
+    ScrollTrigger.create({ trigger: '.bienvenido', start: 'top 80%', onEnter: contar, onEnterBack: contar });
     let activa = false, intentos = 0, yFin = 0, inicio = 0, tirando = false, reloj = 0;
     if (calma) salir.textContent = 'Volver al principio';
     function onScroll() {
@@ -352,7 +378,7 @@
       activa = false; clearTimeout(reloj);
       removeEventListener('scroll', onScroll);
       LB.libre = true;
-      texto.textContent = 'Puedes irte. La puerta se queda abierta.';
+      texto.textContent = 'Puedes irte. Te dejamos la puerta abierta, para cuando vuelvas.';
       setTimeout(regreso, calma ? 0 : 1600);
     }
     function regreso() {
@@ -367,6 +393,7 @@
         LB.fijarActo(1);
         document.title = LB.titulos[1];
         ScrollTrigger.update();
+        setTimeout(() => { if (LB.acto === 1) LB.marta('regreso', {}, { urgente: true }); }, 2600);
       };
       if (calma) { hacer(); document.getElementById('titulo-hero').focus({ preventScroll: true }); return; }
       velo.classList.add('cubre');

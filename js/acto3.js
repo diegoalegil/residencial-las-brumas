@@ -11,34 +11,49 @@
     };
   }
 
-  /* Son las 05:40 */
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const cap = s => s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+
+  /* Son las 05:40: la hora de verdad, y tres cosas que se saben de ella */
   function hora() {
+    const S = LB.sabe;
     const caja = document.getElementById('hora-texto');
     const preg = document.getElementById('hora-pregunta');
     const pie = document.getElementById('hora-pie');
-    const ponerHora = () => {
-      const h = new Date().getHours();
-      caja.textContent = (h === 1 ? 'Es la ' : 'Son las ') + LB.hora() + '.';
-    };
+    const ponerHora = () => { caja.textContent = cap(LB.sonLas()) + '.'; };
     ponerHora();
     const h = new Date().getHours();
-    preg.textContent = (h < 7 || h >= 22) ? '¿Por qué sigues despierto?'
+    preg.textContent = h === 3 ? '¿Tú también lo oyes subir?'
+      : h < 6 ? '¿Por qué no duermes?'
       : h < 13 ? '¿Has dormido algo? Nosotros no.'
-      : h < 20 ? 'Todavía es de día. Aprovéchalo.'
-      : 'Pronto apagarán las farolas.';
+      : h < 20 ? 'Todavía es de día. No va a durar.'
+      : h < 22 ? 'Ya van a apagar las farolas.'
+      : '¿No deberías estar en la cama?';
+    const lineas = () => {
+      const hh = new Date().getHours(), f = S.franja();
+      const momento = { madrugada: 'es de madrugada', manana: 'es por la mañana', tarde: 'es por la tarde', noche: 'es de noche' }[f];
+      const segunda = hh === 3 ? 'Son las tres. A esta hora sube la escalera.'
+        : (S.zona && S.zona.canarias ? 'En Canarias ' + momento : cap(momento)) + '. En la casa 14 siempre son las tres.';
+      const tercera = S.nocturno()
+        ? (S.telefono ? 'Baja el brillo. Así no se te ve la cara desde el pasillo.' : '¿Quién más está despierto en tu casa?')
+        : 'Cuando se haga de noche, acuérdate de esto.';
+      return [`Llevas ${LB.tiempoDentro()} en Las Brumas. Nadie te ha visto entrar.`, segunda, tercera];
+    };
+    let paso = 0;
+    const ponerPie = () => { const l = lineas(); pie.textContent = calma ? l[0] + ' ' + l[1] : l[paso]; };
     let visible = false;
     new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(document.querySelector('.hora'));
-    setInterval(() => {
-      if (!visible) return;
-      ponerHora();
-      pie.textContent = 'Llevas ' + LB.tiempoDentro() + ' en Las Brumas. Nadie te ha visto entrar.';
-    }, 1000);
-    pie.textContent = 'Llevas ' + LB.tiempoDentro() + ' en Las Brumas. Nadie te ha visto entrar.';
+    setInterval(() => { if (!visible) return; ponerHora(); ponerPie(); }, 1000);
+    ponerPie();
 
     const txt = preg.textContent;
     preg.setAttribute('aria-label', txt);
     preg.innerHTML = txt.split(' ').map(p => `<span class="w" aria-hidden="true">${[...p].map(c => `<span class="l">${c}</span>`).join('')}</span>`).join(' ');
     if (calma) return;
+    ScrollTrigger.create({
+      trigger: '.hora', start: 'top top', end: 'bottom bottom',
+      onUpdate: st => { const n = st.progress < 0.38 ? 0 : st.progress < 0.72 ? 1 : 2; if (n !== paso) { paso = n; ponerPie(); } }
+    });
     const r = semilla(7);
     const ls = preg.querySelectorAll('.l');
     gsap.timeline({ scrollTrigger: { trigger: '.hora', start: 'top top', end: 'bottom bottom', scrub: 0.6 } })
@@ -51,62 +66,85 @@
       }, 0.3);
   }
 
-  /* Preguntas que no deberían tener respuesta */
+  /* Más preguntas frecuentes: las respuestas son verdad ahora mismo */
   function saben() {
+    const S = LB.sabe;
     const caja = document.getElementById('texto-saben');
+    const quien = () => {
+      const como = S.como();
+      const r = S.reloj();
+      return 'No nos hace falta tu nombre.' + (como ? ` Sabemos que nos miras ${como}.` : '') + ' Que ' + r.charAt(0).toLowerCase() + r.slice(1);
+    };
+    const cuanto = () => {
+      const n = S.salidas;
+      if (!n) return `${cap(LB.tiempoDentro())}. No te has ido a otra pestaña ni una vez. Buena señal.`;
+      return `${cap(LB.tiempoDentro())}. Te fuiste a otra pestaña ${LB.veces(n)}, ${LB.duracion(S.fuera)} en total, y ${n === 1 ? 'volviste' : 'volviste siempre'}.`;
+    };
+    const bateria = () => {
+      const b = S.bateria;
+      if (!b) return null;
+      if (b.cargando) return 'Lo tienes enchufado. Tienes todo el tiempo del mundo.';
+      if (b.inicial - b.nivel >= 1) return `Entraste con el ${b.inicial} % y te queda el ${b.nivel} %. Haz la cuenta.`;
+      return `Te queda el ${b.nivel} %. De sobra: esto no tarda.`;
+    };
     const escribir = () => {
       const v = LB.visita;
-      const atras = LB.atras;
+      const bat = bateria();
+      const o = S.origen;
       const items = [
-        ['¿Saben quién soy?', `No nos hace falta. Sabemos que son las ${LB.hora()}, que tu pantalla mide ${innerWidth} píxeles de ancho y ${atras === 0 ? 'que todavía no has vuelto atrás. Haces bien.' : `que has intentado volver atrás ${atras} ${atras === 1 ? 'vez' : 'veces'}.`}`],
-        ['¿Puedo cancelar la visita?', v ? `La visita del ${v.dia} a las ${v.hora} no se puede cancelar. Ya ha empezado.` : 'No reservaste ninguna. Te hemos reservado una igualmente: hoy, a las 03:00.'],
-        ['¿Qué pasó con los anteriores dueños de la casa 14?', 'Siguen en la casa 14. Por la noche se les oye poner la mesa.'],
-        ['¿Por qué la casa piloto es tan barata?', 'Porque no se paga con dinero.'],
-        ['¿Por qué los perros no quieren entrar?', 'Porque lo ven.'],
-        ['¿Quién más está leyendo esto?', 'Hay alguien detrás de ti. No te gires todavía.'],
-        ['¿Cómo salgo de aquí?', 'Esa pregunta todavía no tiene respuesta.']
-      ];
-      caja.innerHTML = items.map(([p, r]) => `<p><strong>${p}</strong> ${r}</p>`).join('');
+        ['¿Saben quién soy?', quien()],
+        ['¿Cuánto tiempo llevo aquí?', cuanto()],
+        ['¿Puedo cancelar la visita?', v ? `La visita del ${v.dia} a las ${v.hora} no se puede cancelar. Ya ha empezado: llegaste antes.` : 'No reservaste ninguna. Te reservamos una igualmente: hoy, a las 03:00. Marta ya está en la puerta.'],
+        o && ['¿Cómo llegué hasta aquí?', `Desde ${o.nombre}. ${o.buscador ? 'Buscabas otra cosa y nos encontraste a nosotros.' : 'Alguien quería que vinieras.'}`],
+        ['¿Por qué la casa piloto es tan barata?', `Porque no se paga con dinero. Se paga con tiempo, y tú ya llevas ${LB.minutos()} pagando.`],
+        ['¿Qué pasó con la familia anterior?', 'Nada. Siguen en la casa 14. Por la noche se les oye poner la mesa. Ahora ponen un plato más.'],
+        ['¿Por qué los perros no quieren entrar?', 'Porque miran hacia donde tú no miras: arriba, al final de la escalera.'],
+        bat && ['¿Me da tiempo a terminar?', bat],
+        !S.sonido && ['¿Por qué no se oye nada?', 'Tienes el sonido apagado. Mejor: así, lo que oigas ahora mismo viene de tu casa.'],
+        ['¿Quién más está leyendo esto?', 'Contigo, dos. No te gires todavía.'],
+        ['¿Cómo salgo de aquí?', S.subidas >= 2 ? `Subiendo, no: ya lo intentaste ${LB.veces(S.subidas)}. Sigue bajando. Abajo te están esperando.` : 'No hace falta. Ya estás en casa.']
+      ].filter(Boolean);
+      caja.innerHTML = items.map(([p, r]) => `<p><strong>${esc(p)}</strong> ${esc(r)}</p>`).join('');
     };
     escribir();
     const reescribir = () => { const antes = caja.offsetHeight; escribir(); if (caja.offsetHeight !== antes) ScrollTrigger.refresh(); };
     ScrollTrigger.create({ trigger: '.saben', start: 'top bottom', onEnter: reescribir, onEnterBack: reescribir });
   }
 
-  /* Notas de voz de Pilar */
-  const NOTAS = [
-    ['3 de marzo', '0:12', 'Mamá, ya estamos en la casa. Es preciosa, de verdad. Hay niebla todo el día, pero a los niños les encanta.'],
-    ['6 de marzo', '0:21', 'Oye, ¿tú sabes si los de la casa 13 tienen una niña? Lucía dice que una niña la llama desde el pinar. Por la noche.'],
-    ['9 de marzo', '0:09', 'No consigo dormir. Alguien sube la escalera a las tres. Siempre a las tres. Javi dice que es la madera.'],
-    ['13 de marzo', '0:17', 'Hemos contado las puertas del pasillo. Siete. Lucía dice que hay ocho. Mamá, hoy yo también he contado ocho.'],
-    ['17 de marzo', '0:06', '(susurrando) Está en el cuarto de Lucía. De pie. No se mueve. Es más alto que la puerta.'],
-    ['19 de marzo', '2:41', '(dos minutos y cuarenta y un segundos de respiración)']
-  ];
+  /* Notas de voz de la familia anterior (el texto está en guion.js) */
   function notas() {
     const lista = document.getElementById('lista-notas');
+    const NOTAS = LB.guion.notas;
     const r = semilla(3);
-    lista.innerHTML = NOTAS.map(([dia, dur, texto], i) => {
+    lista.innerHTML = NOTAS.map((n, i) => {
+      const ultima = i === NOTAS.length - 1;
       const barras = Array.from({ length: 34 }, (_, k) => {
-        const base = i === 5 ? 0.18 + 0.12 * Math.sin(k / 2.2) : 0.2 + r() * (0.5 + i * 0.1);
+        const base = ultima ? 0.18 + 0.12 * Math.sin(k / 2.2) : 0.2 + r() * (0.45 + i * 0.06);
         return `<span style="height:${Math.round(Math.min(1, base) * 100)}%"></span>`;
       }).join('');
-      return `<article class="nota-voz" data-paso="${i}">
-        <p class="nota-meta">Pilar · ${dia} · ${dur}</p>
+      const texto = (n.acotacion ? `(${n.acotacion}) ` : '') + n.texto;
+      return `<article class="nota-voz" data-paso="${i}" data-quien="${esc(n.quien)}">
+        <p class="nota-meta">${esc(n.quien)} · ${esc(n.fecha)} · ${esc(n.hora)} · ${esc(n.duracion)} <span class="nota-estado">No enviada</span></p>
         <div class="onda" aria-hidden="true">${barras}</div>
-        <p class="nota-texto" data-texto="${texto.replace(/"/g, '&quot;')}">${texto}</p>
+        <p class="nota-texto" data-texto="${esc(texto)}">${esc(texto)}</p>
       </article>`;
     }).join('');
-    if (calma) return;
-    lista.querySelectorAll('.nota-texto').forEach(p => {
+    lista.querySelectorAll('.nota-texto').forEach((p, i) => {
       const completo = p.dataset.texto;
-      p.innerHTML = '<span class="ya"></span><span class="aun"></span>';
-      const ya = p.firstChild, aun = p.lastChild;
-      aun.textContent = completo;
+      let ya = null, aun = null;
+      if (!calma) {
+        p.innerHTML = '<span class="ya"></span><span class="aun"></span>';
+        ya = p.firstChild; aun = p.lastChild;
+        aun.textContent = completo;
+      }
       ScrollTrigger.create({
         trigger: p, start: 'top 82%', once: true,
         onEnter: () => {
-          let i = 0;
-          const id = setInterval(() => { i += 2; ya.textContent = completo.slice(0, i); aun.textContent = completo.slice(i); if (i >= completo.length) clearInterval(id); }, 28);
+          const n = NOTAS[i];
+          LB.avisa('lb:nota', { indice: i, quien: n.quien, fecha: n.fecha, hora: n.hora, duracion: n.duracion, acotacion: n.acotacion, texto: n.texto, ultima: i === NOTAS.length - 1 });
+          if (calma) return;
+          let k = 0;
+          const id = setInterval(() => { k += 2; ya.textContent = completo.slice(0, k); aun.textContent = completo.slice(k); if (k >= completo.length) clearInterval(id); }, 28);
         }
       });
     });
@@ -157,7 +195,7 @@
   }
   const NINO = `font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive"`;
   const LAMINAS = [
-    ['Mi casa nueva', r => {
+    ['Mi casa nueva', 'Esta es mi casa nueva. El de la ventana ya estaba cuando llegamos.', r => {
       let s = '';
       s += trazo(r, circulo(58, 54, 24), '#f2b705', 5, true) + relleno(r, 40, 36, 76, 72, '#f6c823', 6);
       for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; s += trazo(r, [[58 + Math.cos(a) * 32, 54 + Math.sin(a) * 32], [58 + Math.cos(a) * 46, 54 + Math.sin(a) * 46]], '#f2b705', 4); }
@@ -172,7 +210,7 @@
       s += `<g ${NINO} font-size="15" fill="#333"><text x="24" y="276">papá</text><text x="66" y="276">mamá</text><text x="304" y="276">yo</text><text x="338" y="276">Dani</text><text x="132" y="34" font-size="20">MI CASA NUEVA</text></g>`;
       return s;
     }],
-    ['Mi amigo del pasillo', r => {
+    ['Mi amigo del pasillo', 'No le gusta la luz. Cuando apagas, se hace más largo.', r => {
       let s = '';
       s += trazo(r, [[0, 0], [150, 92]], '#6b4a2f', 4) + trazo(r, [[400, 0], [250, 92]], '#6b4a2f', 4) + trazo(r, [[0, 300], [150, 212]], '#6b4a2f', 4) + trazo(r, [[400, 300], [250, 212]], '#6b4a2f', 4);
       s += trazo(r, [[150, 92], [250, 92], [250, 212], [150, 212]], '#6b4a2f', 4, true);
@@ -182,7 +220,7 @@
       s += `<g ${NINO} fill="#333"><text x="106" y="36" font-size="20">MI AMIGO DEL PASILLO</text><text x="262" y="282" font-size="14">NO LE GUSTA</text><text x="262" y="298" font-size="14">LA LUZ</text></g>`;
       return s;
     }],
-    ['Ya somos cinco', r => {
+    ['Ya somos cinco', 'Papá no quiere que lo dibuje, pero si no lo dibujo se pone triste. Dejé sitio para el siguiente.', r => {
       let s = '';
       s += trazo(r, [[10, 262], [200, 258], [392, 263]], '#3a9a3a', 6);
       s += trazo(r, [[300, 180], [370, 180], [370, 260], [300, 260]], '#8b5a2b', 4, true) + trazo(r, [[292, 182], [335, 146], [378, 182]], '#d2452b', 5, true);
@@ -195,68 +233,84 @@
   ];
   function dibujos() {
     const caja = document.getElementById('laminas');
-    caja.innerHTML = LAMINAS.map(([pie, f], i) => `
-      <figure class="lamina">
-        <svg viewBox="0 0 400 300" role="img" aria-label="Dibujo infantil: ${pie}"><rect width="400" height="300" fill="#fbf8f0"/>${f(semilla(11 + i))}</svg>
-        <figcaption>${pie} · Lucía, 6 años</figcaption>
+    caja.innerHTML = LAMINAS.map(([titulo, cita, f], i) => `
+      <figure class="lamina" data-mira="lamina">
+        <svg viewBox="0 0 400 300" role="img" aria-label="Dibujo infantil: ${titulo}"><rect width="400" height="300" fill="#fbf8f0"/>${f(semilla(11 + i))}</svg>
+        <figcaption>«${cita}» Lucía, 6 años.</figcaption>
       </figure>`).join('');
   }
 
   /* Carteles de «Se busca» */
   const CARTELES = [
-    ['lucia', '¿Has visto a Lucía?', '6 años. Casa 14. Desaparecida desde el 19 de marzo de 2025, junto a sus padres y su hermano.'],
-    ['ernesto', 'Se busca', 'Ernesto B., 71 años. Casa 14. Salió a pasear por el pinar el 2 de noviembre de 2011.'],
-    ['joaquin', 'Se busca', 'Joaquín M., 44 años. Casa 14. Visto por última vez el 12 de marzo de 1987.']
+    ['lucia', '¿Has visto a Lucía?', '6 años. Casa 14. Desaparecida el 19 de marzo de 2025 con sus padres y su hermano Dani, de 3. Si la oyes llamarte desde el pinar, no contestes.'],
+    ['ernesto', 'Se busca', 'Ernesto B., 71 años. Casa 14. Salió con el perro por el pinar el 2 de noviembre de 2011. El perro volvió solo y no quiso entrar.'],
+    ['joaquin', 'Se busca', 'Joaquín M., 44 años. Casa 14. Visto por última vez el 12 de marzo de 1987, el día que les dieron las llaves. Su mujer, Marta, no lo ha denunciado: dice que sigue en casa.']
   ];
   function carteles() {
     const caja = document.getElementById('carteles');
     caja.innerHTML = CARTELES.map(([id, tit, txt], i) => `
-      <article class="cartel" style="--giro:${[-3, 2.4, -1.4][i]}deg">
+      <article class="cartel" data-mira="cartel:${id}" style="--giro:${[-3, 2.4, -1.4][i]}deg">
         <h3>${tit}</h3>
         <div class="cartel-foto">${LB.caras.retrato(id, { raya: true, sonrisa: 0.3 })}</div>
         <p>${txt}</p>
         <div class="tiras" aria-hidden="true">${'<span>Casa 14</span>'.repeat(6)}</div>
       </article>`).join('');
+    const tablon = document.getElementById('tablon');
+    if (tablon) tablon.textContent = `Queda un hueco en el tablón. Ya tiene puesta la fecha de hoy: ${new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'long' }).format(new Date())}.`;
   }
 
-  /* La llamada */
-  const LLAMADA = [
-    ['Operadora', '112, ¿cuál es su emergencia?'],
-    ['Llamante', 'Hay alguien en casa. En el pasillo.'],
-    ['Operadora', '¿Está dentro de la vivienda ahora mismo?'],
-    ['Llamante', 'Sí. Está quieto. Al fondo.'],
-    ['Operadora', 'Dígame la dirección.'],
-    ['Llamante', 'Residencial Las Brumas. Casa catorce. Por favor, rápido.'],
-    ['Operadora', 'No me aparece esa dirección. ¿Puede repetirla?'],
-    ['Llamante', 'Casa catorce. Calle del Pinar. Ya no está al fondo.'],
-    ['Operadora', '¿Puede salir de la vivienda?'],
-    ['Llamante', 'Todas las puertas dan al pasillo. Todas.'],
-    ['Operadora', 'Quédese en línea. ¿Señora? ¿Me oye?'],
-    ['Llamante', '(en voz muy baja) Está sonriendo.'],
-    ['', 'Fin de la llamada · 03:02:47. El número desde el que se llamó no tiene línea asignada.']
-  ];
+  /* La llamada (el texto está en guion.js). Las frases van apareciendo; si no caben, las primeras se van por arriba. */
   function llamada() {
+    const LINEAS = LB.guion.llamada;
     const ol = document.getElementById('transcripcion');
-    ol.innerHTML = LLAMADA.map(([q, t]) => `<li class="${q ? '' : 'fin'}">${q ? `<span class="quien">${q}</span>` : ''}<span>${t}</span></li>`).join('');
-    if (calma) { ol.querySelectorAll('li').forEach(li => li.classList.add('vista')); return; }
-    const lis = ol.querySelectorAll('li');
+    const sr = document.getElementById('transcripcion-sr');
+    const linea = l => (l.acotacion ? `(${esc(l.acotacion)}) ` : '') + esc(l.texto);
+    ol.innerHTML = LINEAS.map(l => `<li class="${l.quien ? '' : 'fin'}">${l.quien ? `<span class="quien">${esc(l.quien)}</span>` : ''}<span>${linea(l)}</span></li>`).join('');
+    if (sr) sr.innerHTML = LINEAS.map(l => `<li>${l.quien ? esc(l.quien) + ': ' : ''}${linea(l)}</li>`).join('');
+    const lis = [...ol.querySelectorAll('li')];
+    let dichas = 0;
+    const anunciar = n => {
+      for (; dichas < n; dichas++) {
+        const l = LINEAS[dichas];
+        LB.avisa('lb:llamada', { indice: dichas, quien: l.quien, voz: l.voz, acotacion: l.acotacion || '', texto: l.texto, fin: !l.quien });
+      }
+    };
+    if (calma) {
+      lis.forEach(li => li.classList.add('vista'));
+      ScrollTrigger.create({ trigger: '.llamada', start: 'top 60%', once: true, onEnter: () => anunciar(lis.length) });
+      return;
+    }
+    let ultimo = -1;
+    const colocar = n => {
+      lis.forEach((li, i) => { li.classList.toggle('vista', i < n); li.classList.remove('pasada'); });
+      for (let i = 0; i < n - 1 && ol.scrollHeight > ol.clientHeight + 1; i++) lis[i].classList.add('pasada');
+    };
     ScrollTrigger.create({
       trigger: '.llamada', start: 'top top', end: 'bottom bottom',
-      onUpdate: s => {
-        const n = Math.floor(tramo(s.progress, 0.05, 0.9) * lis.length + 0.5);
-        lis.forEach((li, i) => li.classList.toggle('vista', i < n));
+      onUpdate: st => {
+        const n = Math.floor(tramo(st.progress, 0.05, 0.9) * lis.length + 0.5);
+        if (n === ultimo) return;
+        ultimo = n;
+        colocar(n);
+        anunciar(n);
       }
     });
+    addEventListener('resize', () => { if (ultimo >= 0) colocar(ultimo); });
   }
 
   /* El contrato se firma solo */
   function contrato() {
     const leido = document.getElementById('leido');
+    let empezado = 0;
+    ScrollTrigger.create({ trigger: '.documento', start: 'top 70%', once: true, onEnter: () => { empezado = Date.now(); } });
     ScrollTrigger.create({
-      trigger: '.documento', start: 'top 70%', once: true,
+      trigger: leido, start: 'top 88%', once: true,
       onEnter: () => {
-        const d = new Date();
-        leido.textContent = `Leído el ${d.toLocaleDateString('es-ES')} a las ${LB.hora()}. Firmado.`;
+        const d = new Date(), S = LB.sabe;
+        const s = empezado ? Math.max(1, Math.round((Date.now() - empezado) / 1000)) : 0;
+        const desde = S.dispositivo ? ', ' + S.dispositivo.desde : '';
+        const tiempo = !s ? '' : s < 4 ? `, en ${s} ${s === 1 ? 'segundo' : 'segundos'}. Sin leerlo. Firmado igual.` : `, en ${s} segundos. Firmado.`;
+        leido.textContent = `Leído el ${d.toLocaleDateString('es-ES')} a ${LB.las(d)}${desde}${tiempo || '. Firmado.'}`;
         leido.classList.add('listo');
       }
     });
@@ -268,6 +322,10 @@
 
   /* El cristal: vaho, manos desde dentro, letras al revés */
   function cristal() {
+    const pieCristal = document.getElementById('cristal-pie');
+    if (pieCristal) pieCristal.textContent = tactil
+      ? 'Alguien respiró contra el cristal. Desde dentro. Tú lo estás tocando desde fuera.'
+      : 'Alguien respiró contra el cristal. Desde dentro. A la altura de tu cara.';
     const cv = document.getElementById('vaho');
     const ctx = cv.getContext('2d');
     const capa = document.createElement('canvas');

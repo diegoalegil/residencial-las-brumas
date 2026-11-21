@@ -12,7 +12,7 @@
     });
   });
 
-  ['acto1', 'acto2', 'acto3', 'descenso', 'sonido'].forEach(m => { if (typeof LB[m] === 'function') LB[m](); });
+  ['acto1', 'acto2', 'acto3', 'descenso', 'sonido', 'vigilancia'].forEach(m => { if (typeof LB[m] === 'function') LB[m](); });
 
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => ScrollTrigger.refresh());
   addEventListener('load', () => ScrollTrigger.refresh());
