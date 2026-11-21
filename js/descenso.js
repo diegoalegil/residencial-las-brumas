@@ -1,13 +1,6 @@
 /* Actos 4 y 5: el pasillo, la calma falsa, la figura y la vuelta al principio */
 (function () {
   const { calma, tramo, clamp, azar, raiz } = LB;
-  const L = 22, W = 1.1, SUELO = -1, TECHO = 1.25;
-  const LAMPARAS = [3, 9, 15, 21];
-  const PUERTAS = [
-    { lado: -1, z: 2.2 }, { lado: 1, z: 4.6 }, { lado: -1, z: 7.4 }, { lado: 1, z: 9.8, abre: true },
-    { lado: -1, z: 11.2, ojos: true }, { lado: 1, z: 15.6 }, { lado: -1, z: 18.4 },
-    { lado: 1, z: 13.0, octava: true }
-  ];
   /* Susurros: algunos dicen lo que es verdad ahora mismo (la hora, tu batería, tu mano) */
   const S = () => LB.sabe;
   const SUSURROS = [
@@ -21,34 +14,28 @@
   ];
   const CENTRO = [[0.58, 0.635, 'Ya está.'], [0.6, 0.655, 'Ya está. Ya pasó.'], [0.915, 1.01, 'Ya estás dentro.']];
 
-  let cv, ctx, w = 0, h = 0, dpr = 1;
+  /* El pasillo son cinco fotos del mismo sitio (noche, figura al fondo, luz, figura cerca y la cara).
+     Las cuatro lámparas no se ven: deciden cuánta sombra cae encima, y las fotos solo cambian a oscuras. */
+  let caja, fotos = {}, sombra, W = 0, H = 0;
   let Pobj = 0, P = 0, activo = false;
-  const cam = { x: 0, y: 0, z: 0 };
-  const lamp = LAMPARAS.map(() => ({ on: true, hasta: 0, nivel: 1 }));
-  let figZ = 21.2, figObjetivo = 21.2, pose = null, proximaPose = 0;
+  const lamp = [0, 1, 2, 3].map(() => ({ on: true, hasta: 0, nivel: 1 }));
   let caraVisible = false, caraCambio = 0, ultimoChillido = 0;
+  let quiere = 'noche', vista = 'noche', saltoQuiere = 0, saltoVista = 0;
+  const facil = gsap.parseEase('power1.inOut');
 
+  /* Dónde cae un punto de la foto (u, v) dentro de la pantalla con object-fit: cover; sirve de centro del zoom */
+  const ENFOQUE = { noche: [0.5, 0.43, 0.45], figura: [0.5, 0.43, 0.45], luz: [0.5, 0.43, 0.45], cerca: [0.49, 0.3, 0.25], cara: [0.5, 0.3, 0.12] };
+  const origen = {};
   function medir() {
-    dpr = Math.min(devicePixelRatio || 1, 1.25);
-    w = cv.width = Math.round(cv.clientWidth * dpr);
-    h = cv.height = Math.round(cv.clientHeight * dpr);
+    W = caja.clientWidth; H = caja.clientHeight;
+    Object.keys(ENFOQUE).forEach(k => {
+      const [u, v, py] = ENFOQUE[k], s = Math.max(W / 1024, H / 1536), dw = 1024 * s, dh = 1536 * s;
+      origen[k] = `${((W - dw) * 0.5 + u * dw).toFixed(1)}px ${((H - dh) * py + v * dh).toFixed(1)}px`;
+      fotos[k].style.transformOrigin = origen[k];
+    });
   }
 
-  /* Proyección */
-  let f = 1, cx = 0, cy = 0;
-  const pr = (x, y, z) => { const dz = Math.max(0.05, z - cam.z); return [cx + (x - cam.x) / dz * f, cy - (y - cam.y) / dz * f]; };
-  function quad(a, b, c, d, color) {
-    ctx.fillStyle = color; ctx.beginPath();
-    ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.closePath(); ctx.fill();
-  }
-  const rgb = (r, g, b, k) => `rgb(${Math.round(r * k)},${Math.round(g * k)},${Math.round(b * k)})`;
-
-  /* Luz: lámparas que fallan, nunca más de dos veces por segundo */
-  function luz(z) {
-    let b = 0.035;
-    LAMPARAS.forEach((lz, i) => { b += Math.exp(-((z - lz) ** 2) / 7) * lamp[i].nivel; });
-    return b * Math.exp(-Math.max(0, z - cam.z) * 0.075);
-  }
+  /* Lámparas que fallan: un solo apagón a la vez y como mucho uno cada 0,7 s, nada de destellos seguidos */
   function actualizarLamparas(t, fase) {
     lamp.forEach((l, i) => {
       if (fase === 'apagon') { l.nivel += (0 - l.nivel) * 0.25; return; }
@@ -56,7 +43,6 @@
       if (t > l.hasta) {
         const nervio = fase === 'figura' ? 0.5 : 1;
         if (l.on) {
-          /* Un solo apagón a la vez y como mucho uno cada 0,7 s: nada de destellos seguidos */
           if (t > proximoApagon && lamp.every(o => o.on)) {
             l.on = false; l.hasta = t + azar(160, 520); proximoApagon = l.hasta + 700;
           } else l.hasta = t + azar(400, 1600) * nervio;
@@ -67,97 +53,27 @@
     });
   }
   let proximoApagon = 0;
-  function forzarApagon(i, t, ms) { lamp[i].on = false; lamp[i].hasta = t + ms; proximoApagon = Math.max(proximoApagon, t + ms + 700); }
+  /* Todas a la vez, para cambiar de foto sin que se vea el cambio */
+  function apagarTodo(t, ms) { lamp.forEach(l => { l.on = false; l.hasta = t + ms; }); proximoApagon = Math.max(proximoApagon, t + ms + 700); }
 
-  /* La figura: miembros demasiado largos y pose a tirones */
-  function nuevaPose(t, intensa) {
-    const j = intensa ? 1.6 : 1;
-    pose = {
-      ladeo: Math.random() < (intensa ? 0.45 : 0.2) ? azar(0.9, 1.45) * (Math.random() < 0.5 ? -1 : 1) : azar(-0.35, 0.35),
-      hombro: azar(-0.05, 0.05) * j, codoI: azar(-0.06, 0.06) * j, codoD: azar(-0.06, 0.06) * j,
-      manoI: azar(-0.05, 0.08) * j, manoD: azar(-0.05, 0.08) * j, rodilla: azar(-0.04, 0.04) * j, dx: azar(-0.03, 0.03) * j
-    };
-    proximaPose = t + (intensa ? azar(90, 190) : azar(400, 1100));
+  let mostrada = '';
+  function mostrar(k) {
+    if (k === mostrada) return;
+    if (mostrada) fotos[mostrada].classList.remove('activa');
+    if (k) fotos[k].classList.add('activa');
+    mostrada = k;
   }
-  function figura(z, x, t, intensa, ojos) {
-    const dz = z - cam.z; if (dz < 0.2) return;
-    if (!pose || t > proximaPose) nuevaPose(t, intensa);
-    const u = f / dz, [bx, by] = pr(x + pose.dx, SUELO, z);
-    const P2 = (px, py) => [bx + px * u, by - py * u];
-    ctx.fillStyle = '#040404'; ctx.strokeStyle = '#040404'; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    const linea = (pts, ancho) => { ctx.lineWidth = ancho * u; ctx.beginPath(); pts.forEach((p, i) => { const q = P2(p[0], p[1]); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.stroke(); };
-    linea([[-0.07, 1.05], [-0.1 + pose.rodilla, 0.55], [-0.11, 0]], 0.055);
-    linea([[0.07, 1.05], [0.1 - pose.rodilla, 0.55], [0.12, 0]], 0.055);
-    ctx.beginPath(); [[-0.09, 1.02], [0.09, 1.02], [0.17, 1.74 + pose.hombro], [-0.17, 1.74 - pose.hombro]].forEach((p, i) => { const q = P2(p[0], p[1]); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.fill();
-    linea([[-0.16, 1.72 - pose.hombro], [-0.27 + pose.codoI, 1.12], [-0.25 + pose.manoI, 0.36]], 0.045);
-    linea([[0.16, 1.72 + pose.hombro], [0.28 + pose.codoD, 1.1], [0.26 + pose.manoD, 0.34]], 0.045);
-    [[-0.25 + pose.manoI, 0.36, -1], [0.26 + pose.manoD, 0.34, 1]].forEach(([hx, hy, s]) => {
-      for (let k = 0; k < 4; k++) linea([[hx, hy], [hx + s * (k - 1.5) * 0.025, hy - 0.16 - (k % 2) * 0.03]], 0.014);
-    });
-    const a = pose.ladeo, cuelloX = 0, cuelloY = 1.8;
-    const hx = cuelloX + Math.sin(a) * 0.2, hy = cuelloY + Math.cos(a) * 0.17;
-    linea([[cuelloX, 1.72], [cuelloX, cuelloY], [hx * 0.6, hy - 0.04]], 0.05);
-    const [qx, qy] = P2(hx, hy);
-    ctx.beginPath(); ctx.ellipse(qx, qy, 0.1 * u, 0.135 * u, a, 0, Math.PI * 2); ctx.fill();
-    if (ojos) {
-      ctx.fillStyle = 'rgba(214,206,190,0.85)';
-      [-1, 1].forEach(s => { const ex = qx + Math.cos(a) * s * 0.035 * u, ey = qy - Math.sin(a) * s * 0.035 * u; ctx.beginPath(); ctx.arc(ex, ey, Math.max(1, 0.009 * u), 0, Math.PI * 2); ctx.fill(); });
-    }
+  let sombraPuesta = -1;
+  function oscurecer(o) {
+    const v = Math.round(clamp(o, 0, 1) * 100) / 100;
+    if (v !== sombraPuesta) { sombra.style.opacity = v; sombraPuesta = v; }
   }
-
-  /* El primer plano */
-  function primerPlano(t, k) {
-    const S = Math.max(w, h * 0.9);
-    const temblor = calma ? 0 : (1 - k) * 10 * dpr + 3 * dpr;
-    ctx.fillStyle = '#020202'; ctx.fillRect(0, 0, w, h);
-    ctx.save();
-    ctx.translate(w / 2 + azar(-temblor, temblor), h * 0.56 + azar(-temblor, temblor));
-    const tir = Math.floor(t / 110) % 5 === 0 ? 0.06 : 0;
-    ctx.rotate(0.22 + k * 0.28 + tir);
-    const piel = ctx.createRadialGradient(-S * 0.05, -S * 0.05, S * 0.05, 0, 0, S * 0.6);
-    piel.addColorStop(0, '#9d998d'); piel.addColorStop(0.6, '#77746a'); piel.addColorStop(1, '#2a2925');
-    ctx.fillStyle = piel;
-    ctx.beginPath(); ctx.ellipse(0, 0, S * 0.36, S * 0.56, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = 'rgba(40,38,34,0.55)';
-    ctx.beginPath(); ctx.ellipse(-S * 0.13, -S * 0.11, S * 0.13, S * 0.11, 0.1, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(S * 0.14, -S * 0.08, S * 0.12, S * 0.11, -0.15, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(-S * 0.2, S * 0.14, S * 0.07, S * 0.18, 0.15, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(S * 0.21, S * 0.16, S * 0.07, S * 0.18, -0.15, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#030303';
-    ctx.beginPath(); ctx.ellipse(-S * 0.13, -S * 0.12, S * 0.08, S * 0.062, 0.1, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(S * 0.14, -S * 0.085, S * 0.07, S * 0.068, -0.15, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#d9d3c4';
-    ctx.beginPath(); ctx.arc(-S * 0.12 + azar(-2, 2) * dpr, -S * 0.12, S * 0.007, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.arc(S * 0.155 + azar(-2, 2) * dpr, -S * 0.085, S * 0.005, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = 'rgba(20,18,16,0.7)'; ctx.lineWidth = S * 0.003;
-    ctx.beginPath(); ctx.moveTo(-S * 0.05, -S * 0.42); ctx.lineTo(-S * 0.03, -S * 0.32); ctx.lineTo(-S * 0.06, -S * 0.25); ctx.lineTo(-S * 0.04, -S * 0.2);
-    ctx.moveTo(S * 0.22, S * 0.02); ctx.lineTo(S * 0.26, S * 0.12); ctx.lineTo(S * 0.24, S * 0.2); ctx.stroke();
-    const boca = S * (0.07 + k * 0.24), my = S * 0.17 + boca * 0.55;
-    ctx.fillStyle = '#020202';
-    ctx.beginPath(); ctx.moveTo(-S * 0.07, S * 0.17); ctx.bezierCurveTo(-S * 0.1, my, -S * 0.05, my + boca * 0.7, S * 0.01, my + boca * 0.6);
-    ctx.bezierCurveTo(S * 0.07, my + boca * 0.7, S * 0.11, my, S * 0.08, S * 0.17); ctx.bezierCurveTo(S * 0.03, S * 0.15, -S * 0.03, S * 0.15, -S * 0.07, S * 0.17); ctx.fill();
-    ctx.fillStyle = '#8e887a';
-    for (let i = 0; i < 11; i++) {
-      const px = -S * 0.06 + i * S * 0.0135, largo = S * (0.018 + ((i * 7) % 5) * 0.006);
-      ctx.beginPath(); ctx.moveTo(px - S * 0.005, S * 0.163); ctx.lineTo(px + S * 0.005, S * 0.163); ctx.lineTo(px + S * 0.001, S * 0.163 + largo); ctx.fill();
-    }
-    ctx.strokeStyle = '#040404'; ctx.lineCap = 'round';
-    const mechones = [[-0.34, 0.03, 0.75], [-0.3, 0.028, 0.7], [-0.25, 0.022, 0.62], [-0.2, 0.016, 0.5], [-0.15, 0.012, 0.42], [-0.08, 0.01, 0.12], [0.02, 0.008, 0.05], [0.1, 0.012, 0.3], [0.17, 0.014, 0.48], [0.23, 0.02, 0.6], [0.28, 0.026, 0.72], [0.33, 0.032, 0.78], [-0.11, 0.006, 0.05]];
-    mechones.forEach(([x, g, largo], i) => {
-      const ox = Math.sin(t / 700 + i) * S * 0.004;
-      ctx.lineWidth = S * g;
-      ctx.beginPath(); ctx.moveTo(S * x * 0.7, -S * 0.58);
-      ctx.bezierCurveTo(S * (x * 1.1) + ox, -S * 0.3, S * (x * 0.95 + 0.02 * Math.sin(i)) + ox, S * 0.0, S * (x * 1.05) + ox, S * (largo - 0.2));
-      ctx.stroke();
-    });
-    ctx.globalAlpha = 1;
-    ctx.restore();
-  }
+  const mover = (k, x, y, esc, giro = 0) => { fotos[k].style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${esc.toFixed(4)})${giro ? ` rotate(${giro}deg)` : ''}`; };
 
   /* Un fotograma */
   function pintar(t) {
     requestAnimationFrame(pintar);
-    if (!activo || !w) return;
+    if (!activo || !W) return;
     const pesado = LB.acto === 4 && !calma;
     P += (Pobj - P) * (calma ? 1 : pesado ? 0.045 : 0.14);
     let fase = 'pasillo';
@@ -171,95 +87,56 @@
     if (fase === 'cara' && !calma) {
       if (!caraVisible && t - caraCambio > 700) { caraVisible = true; caraCambio = t; if (t - ultimoChillido > 3000) { ultimoChillido = t; if (LB.chillido) LB.chillido(); } }
     } else if (caraVisible && t - caraCambio > 700) { caraVisible = false; caraCambio = t; }
-    if (caraVisible) { primerPlano(t, tramo(P, 0.86, 0.905)); return; }
-
-    if (fase === 'negro' || (fase === 'cara' && !calma)) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h); return; }
+    fotos.cara.style.opacity = '';
+    /* La cara, con flash, encima de todo y temblando */
+    if (caraVisible) {
+      const k = tramo(P, 0.86, 0.905), tb = (1 - k) * 10 + 3;
+      mostrar('cara'); oscurecer(0);
+      mover('cara', azar(-tb, tb), azar(-tb, tb), 1.04 + 0.21 * k, Math.floor(t / 110) % 5 === 0 ? 1.2 : 0);
+      return;
+    }
+    if (fase === 'negro' || (fase === 'cara' && !calma)) { oscurecer(1); return; }
 
     actualizarLamparas(t, fase);
-    LB.oscuridad.luz = lamp.reduce((s, l) => s + l.nivel, 0) / lamp.length;
-    cam.z = 12.5 * gsap.parseEase('power1.inOut')(tramo(calma ? Math.round(P * 14) / 14 : P, 0.04, 0.5));
-    cam.x = calma ? 0 : Math.sin(t / 1900) * 0.025;
-    cam.y = Math.sin(cam.z * 4.2) * 0.022;
-    f = h * 0.82; cx = w / 2; cy = h * 0.47;
+    const media = lamp.reduce((s, l) => s + l.nivel, 0) / lamp.length;
+    LB.oscuridad.luz = media;
+    const oscuro = 1 - Math.pow(clamp((media - 0.25) / 0.67, 0, 1), 1.4);
 
-    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
-    const z0 = cam.z + 0.12;
-    const finAbierto = P >= 0.5;
-    const b = luz(L - 0.2);
-    quad(pr(-W, SUELO, L), pr(W, SUELO, L), pr(W, TECHO, L), pr(-W, TECHO, L), rgb(84, 86, 74, b));
-    quad(pr(-0.45, SUELO, L), pr(0.45, SUELO, L), pr(0.45, 0.95, L), pr(-0.45, 0.95, L), finAbierto ? '#010101' : rgb(58, 40, 28, b));
-
-    const pasos = [];
-    for (let z = L; z > z0; z -= 1) pasos.push([Math.max(z - 1, z0), z]);
-    pasos.forEach(([za, zb]) => {
-      const zm = (za + zb) / 2, k = luz(zm);
-      quad(pr(-W, SUELO, za), pr(-W, TECHO, za), pr(-W, TECHO, zb), pr(-W, SUELO, zb), rgb(92, 96, 80, k));
-      quad(pr(W, SUELO, za), pr(W, TECHO, za), pr(W, TECHO, zb), pr(W, SUELO, zb), rgb(86, 90, 75, k));
-      quad(pr(-W, SUELO, za), pr(W, SUELO, za), pr(W, SUELO, zb), pr(-W, SUELO, zb), rgb(74, 54, 38, k));
-      quad(pr(-W, TECHO, za), pr(W, TECHO, za), pr(W, TECHO, zb), pr(-W, TECHO, zb), rgb(62, 62, 58, k * 0.8));
-      [-W, W].forEach(x => {
-        quad(pr(x, SUELO, za), pr(x, -0.86, za), pr(x, -0.86, zb), pr(x, SUELO, zb), rgb(40, 32, 26, k));
-        quad(pr(x, -0.12, za), pr(x, -0.07, za), pr(x, -0.07, zb), pr(x, -0.12, zb), rgb(120, 112, 96, k));
-      });
-    });
-    ctx.strokeStyle = 'rgba(0,0,0,0.35)'; ctx.lineWidth = 1.2 * dpr;
-    [-0.66, -0.22, 0.22, 0.66].forEach(x => { const a = pr(x, SUELO, z0), c = pr(x, SUELO, L); ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(c[0], c[1]); ctx.stroke(); });
-
-    PUERTAS.forEach(p => {
-      if (p.octava && P < 0.55) return;
-      if (p.z + 0.9 < z0) return;
-      const x = p.lado * W, za = Math.max(p.z, z0), zb = p.z + 0.9, k = luz(p.z + 0.45);
-      quad(pr(x, SUELO, za), pr(x, 0.95, za), pr(x, 0.95, zb), pr(x, SUELO, zb), rgb(30, 24, 18, k));
-      quad(pr(x, SUELO, za + 0.05), pr(x, 0.9, za + 0.05), pr(x, 0.9, zb - 0.05), pr(x, SUELO, zb - 0.05), rgb(66, 46, 32, k));
-      if (p.ojos) {
-        quad(pr(x, SUELO, zb - 0.16), pr(x, 0.9, zb - 0.16), pr(x, 0.9, zb - 0.05), pr(x, SUELO, zb - 0.05), '#010101');
-        if ((t % 5200) > 260) {
-          ctx.fillStyle = 'rgba(222,214,196,0.8)';
-          [0.47, 0.47].forEach((yy, i) => { const q = pr(x * 0.99, yy, zb - 0.12 + i * 0.05); ctx.beginPath(); ctx.arc(q[0], q[1], Math.max(1, 3.4 * dpr * 3 / Math.max(1, p.z - cam.z)), 0, Math.PI * 2); ctx.fill(); });
-        }
-      }
-      if (p.abre) {
-        const ab = tramo(cam.z, 4, 9.6) * 0.38;
-        if (ab > 0) quad(pr(x, SUELO, za + 0.05), pr(x, 0.9, za + 0.05), pr(x - p.lado * ab, 0.9, za + 0.05 + ab * 0.4), pr(x - p.lado * ab, SUELO, za + 0.05 + ab * 0.4), '#020202');
-      }
-      ctx.fillStyle = rgb(190, 160, 100, k);
-      const pomo = pr(x * 0.995, -0.05, zb - 0.14); ctx.beginPath(); ctx.arc(pomo[0], pomo[1], Math.max(1, 2.2 * dpr * 3 / Math.max(1, p.z - cam.z)), 0, Math.PI * 2); ctx.fill();
-    });
-
-    const cz = 6.2;
-    if (cz > z0) {
-      const k = luz(cz);
-      quad(pr(W, 0.15, cz), pr(W, 0.75, cz), pr(W, 0.75, cz + 0.7), pr(W, 0.15, cz + 0.7), rgb(26, 22, 16, k));
-      quad(pr(W, 0.2, cz + 0.05), pr(W, 0.7, cz + 0.05), pr(W, 0.7, cz + 0.65), pr(W, 0.2, cz + 0.65), rgb(150, 160, 150, k));
-      quad(pr(W, 0.2, cz + 0.2), pr(W, 0.48, cz + 0.2), pr(W, 0.48, cz + 0.5), pr(W, 0.2, cz + 0.5), rgb(220, 214, 200, k));
-      if (P >= 0.55) quad(pr(W, 0.2, cz + 0.12), pr(W, 0.62, cz + 0.12), pr(W, 0.62, cz + 0.16), pr(W, 0.2, cz + 0.16), '#030303');
-    }
-
-    LAMPARAS.forEach((lz, i) => {
-      if (lz < z0) return;
-      const q = pr(0, TECHO - 0.05, lz), r = Math.max(1.5, 0.05 * f / (lz - cam.z));
-      ctx.fillStyle = `rgba(250,226,170,${(0.15 + lamp[i].nivel * 0.85).toFixed(2)})`;
-      ctx.beginPath(); ctx.arc(q[0], q[1], r, 0, Math.PI * 2); ctx.fill();
-    });
-
+    /* Qué foto toca y cuánto zoom */
+    let deseo = vista, salto = 0, esc = 1, k = 0;
     if (fase === 'pasillo') {
-      const objetivo = P < 0.2 ? 21.2 : P < 0.32 ? 20.1 : P < 0.44 ? 18.8 : 17.3;
-      if (objetivo !== figObjetivo) { figObjetivo = objetivo; forzarApagon(3, t, 380); forzarApagon(2, t, 300); }
-      if (lamp[3].nivel < 0.3) figZ = figObjetivo;
-      if (figZ > z0 + 0.3) figura(figZ, 0, t, false, false);
+      const etapa = P < 0.2 ? 0 : P < 0.32 ? 1 : P < 0.44 ? 2 : 3;
+      deseo = etapa ? 'figura' : 'noche'; salto = Math.max(0, etapa - 1) * 0.07;
+      k = facil(tramo(calma ? Math.round(P * 14) / 14 : P, 0.04, 0.5));
+      esc = 1 + 0.28 * k;
+    } else if (fase === 'apagon') {
+      deseo = vista; salto = saltoVista; k = 1; esc = 1.28;
+    } else if (fase === 'calma') {
+      deseo = 'luz';
     } else if (fase === 'figura') {
       const q = Math.floor(tramo(P, 0.66, 0.86) * 22) / 22;
-      figZ = 21 - q * (21 - (cam.z + 0.8));
-      figura(figZ, Math.sin(q * 9) * 0.06, t, true, q > 0.35);
-    } else if (fase === 'cara' && calma) {
-      ctx.globalAlpha = tramo(P, 0.86, 0.9);
-      primerPlano(t, 0.4);
-      ctx.globalAlpha = 1;
+      if (q < 0.42) { deseo = 'figura'; esc = 1 + 0.5 * q / 0.42; } else { deseo = 'cerca'; esc = 1 + 0.45 * (q - 0.42) / 0.58; }
+    } else if (fase === 'cara') {
+      deseo = 'cerca'; esc = 1.45;
     }
-
-    const vig = ctx.createRadialGradient(w / 2, h / 2, h * 0.25, w / 2, h / 2, h * 0.85);
-    vig.addColorStop(0, 'rgba(0,0,0,0)'); vig.addColorStop(1, 'rgba(0,0,0,0.75)');
-    ctx.fillStyle = vig; ctx.fillRect(0, 0, w, h);
+    /* Cambiar de foto solo a oscuras (en la calma y con movimiento reducido, al momento) */
+    if (deseo !== quiere || salto !== saltoQuiere) {
+      quiere = deseo; saltoQuiere = salto;
+      if (!calma && fase !== 'calma' && fase !== 'apagon') apagarTodo(t, 380);
+    }
+    if (calma || fase === 'calma' || oscuro > 0.7) { vista = quiere; saltoVista = saltoQuiere; }
+    mostrar(vista);
+    oscurecer(oscuro);
+    if (calma) {
+      fotos[vista].style.transform = '';
+      if (fase === 'cara') { fotos.cara.classList.add('activa'); fotos.cara.style.opacity = tramo(P, 0.86, 0.9); }
+      else if (mostrada !== 'cara') fotos.cara.classList.remove('activa');
+      return;
+    }
+    /* Andar: un balanceo leve y el paso */
+    const x = Math.sin(t / 1900) * W * 0.004;
+    const y = fase === 'pasillo' ? Math.sin(k * 52) * H * 0.003 : 0;
+    mover(vista, x, y, (vista === 'figura' || vista === 'noche' ? esc + saltoVista : esc));
   }
 
   /* Textos: susurros y frases en el centro */
@@ -347,7 +224,8 @@
       const fuera = n === 0 ? 'No te fuiste ni una vez.' : n === 1 ? 'Te fuiste una vez y volviste.' : n === 2 ? 'Te fuiste dos veces y volviste las dos.' : `Te fuiste ${LB.veces(n)} y volviste todas.`;
       datos.textContent = horas + ' ' + fuera;
     };
-    ScrollTrigger.create({ trigger: '.bienvenido', start: 'top 80%', onEnter: contar, onEnterBack: contar });
+    const final = document.getElementById('bienvenido');
+    ScrollTrigger.create({ trigger: '.bienvenido', start: 'top 80%', onEnter: () => { contar(); final.classList.add('vista'); }, onEnterBack: contar });
     let activa = false, intentos = 0, yFin = 0, inicio = 0, tirando = false, reloj = 0;
     if (calma) salir.textContent = 'Volver al principio';
     function onScroll() {
@@ -406,16 +284,19 @@
   }
 
   LB.descenso = function () {
-    cv = document.getElementById('pasillo');
-    ctx = cv.getContext('2d');
+    caja = document.getElementById('pasillo');
+    caja.querySelectorAll('img').forEach(img => { fotos[img.dataset.foto] = img; });
+    sombra = caja.querySelector('.pasillo-sombra');
     medir();
-    addEventListener('resize', () => { if (Math.abs(cv.clientWidth * Math.min(devicePixelRatio || 1, 1.25) - w) > 2 || Math.abs(cv.clientHeight * Math.min(devicePixelRatio || 1, 1.25) - h) > 120) medir(); });
+    addEventListener('resize', medir);
+    /* Las fotos del pasillo y del final, listas antes de llegar */
+    LB.alCambiarActo(n => { if (n >= 3) LB.precargar('#pasillo img, .bienvenido-foto img, .foto-noche'); });
     ScrollTrigger.create({
       trigger: '#oscuridad', start: 'top top', end: 'bottom bottom',
       onUpdate: s => { Pobj = s.progress; },
       onToggle: s => { activo = s.isActive || s.progress > 0 && s.progress < 1; }
     });
-    new IntersectionObserver(es => { activo = es[0].isIntersecting; }).observe(cv);
+    new IntersectionObserver(es => { activo = es[0].isIntersecting; }).observe(caja);
     let medido = false;
     LB.alCambiarActo(n => { if (n === 4 && !medido) { medido = true; ScrollTrigger.refresh(); } });
     textos();

@@ -367,7 +367,14 @@
 <!-- ACTOS 4 y 5 · Descenso y final -->
 <div class="oscuridad" id="oscuridad">
   <div class="oscuridad-fijo">
-    <canvas id="pasillo" aria-hidden="true"></canvas>
+    <div class="pasillo" id="pasillo" aria-hidden="true">
+      <img data-foto="noche" src="img/pasillo-noche.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+      <img data-foto="figura" src="img/pasillo-figura.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+      <img data-foto="luz" src="img/pasillo-luz.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+      <img data-foto="cerca" src="img/pasillo-cerca.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+      <img data-foto="cara" src="img/cara.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+      <div class="pasillo-sombra"></div>
+    </div>
     <div class="susurros" id="susurros" aria-hidden="true"></div>
     <p class="rotulo" id="rotulo">Casa piloto · planta alta · 03:00<span id="rotulo-hora"></span></p>
     <p class="centro" id="centro" aria-live="polite"></p>
@@ -384,6 +391,7 @@
   <h2 id="titulo-bienvenido" class="bienvenido-titulo">Bienvenido a casa.</h2>
   <p class="bienvenido-datos" id="bienvenido-datos"></p>
   <p class="trampa-texto" id="trampa-texto" aria-live="polite"></p>
+  <div class="bienvenido-foto"><img src="img/casa-final.webp" alt="La casa 14 de noche, con luz en todas las ventanas y una silueta quieta en cada una. La del ático es altísima. La puerta está abierta." width="1024" height="1536" loading="lazy" decoding="async"></div>
   <button class="salir" id="salir" type="button" data-mira="salir">Salir de Las Brumas</button>
   <p class="aviso-ficcion">Residencial Las Brumas es una ficción. Ninguna casa, persona ni empresa de esta página existe.</p>
 </section>
