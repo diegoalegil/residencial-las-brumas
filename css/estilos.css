@@ -1,6 +1,8 @@
 /* Residencial Las Brumas */
 
 :root {
+  --icono-mudo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z' fill='black'/%3E%3Cpath d='m22 9-6 6M16 9l6 6'/%3E%3C/svg%3E");
+  --icono-sonido: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M11 5 6 9H3v6h3l5 4z' fill='black'/%3E%3Cpath d='M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13'/%3E%3C/svg%3E");
   --bg: #dedad3;
   --surface: #d3cec6;
   --ink: #0a0a0a;
@@ -591,7 +593,13 @@ html[data-acto="4"] .asesora-cerrar:hover, html[data-acto="5"] .asesora-cerrar:h
   .asesora { top: 12px; bottom: auto; right: 12px; width: calc(100vw - 24px); grid-template-columns: 40px 1fr 32px; padding: 10px; }
   .asesora-cara { width: 40px; height: 40px; }
   .asesora-mensaje { font-size: 15px; }
-  .sonido { left: 10px; bottom: 10px; min-height: 40px; padding: 0 12px; font-size: 14px; }
+  /* En el móvil, solo el icono: el texto sigue ahí para los lectores de pantalla. */
+  .sonido { left: 10px; bottom: 10px; width: 44px; min-height: 44px; padding: 0; font-size: 0; display: grid; place-items: center; }
+  .sonido::before {
+    content: ''; width: 22px; height: 22px; background: currentColor;
+    -webkit-mask: var(--icono-mudo) center / contain no-repeat; mask: var(--icono-mudo) center / contain no-repeat;
+  }
+  .sonido[aria-pressed="true"]::before { -webkit-mask-image: var(--icono-sonido); mask-image: var(--icono-sonido); }
   .enlaces-hero { bottom: 64px; }
   .tarjeta { padding-bottom: 120px; }
 }
