@@ -383,3 +383,104 @@ button { font: inherit; color: inherit; }
   .led { animation: none; }
   .detras { transition: none; }
 }
+
+/* ======================= ACTO 3 ======================= */
+:root { --aberr: 0; }
+.sr-solo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.acto-3 h2, .hora-grande, .hora-pregunta {
+  text-shadow: calc(var(--aberr) * 1px) 0 rgba(190, 30, 25, 0.55), calc(var(--aberr) * -1px) 0 rgba(40, 160, 170, 0.45);
+}
+.acto-3 h2 { font-size: clamp(2.4rem, 6.4vw, 6.6rem); line-height: 0.95; letter-spacing: -0.04em; max-width: 16ch; }
+
+.hora { height: 260vh; background: #b8b2a5; }
+.hora-fijo { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 0 var(--margen); overflow: hidden; }
+.hora-grande { font-size: clamp(4rem, 15vw, 16rem); line-height: 0.88; letter-spacing: -0.05em; font-variant-numeric: tabular-nums; }
+.hora-pregunta { font-size: clamp(2.2rem, 6.6vw, 6.8rem); line-height: 1; letter-spacing: -0.035em; margin-top: 3vh; max-width: 14ch; }
+.hora-pie { margin-top: 5vh; font-size: var(--step-lead); max-width: 34ch; }
+.calma .hora { height: auto; }
+.calma .hora-fijo { position: static; height: auto; min-height: 100svh; padding: 18vh var(--margen); }
+
+.saben { padding: 20vh var(--margen); background: #6c7766; color: #0a0a0a; }
+.texto-saben { margin-top: 56px; columns: 2; column-gap: 56px; max-width: 1100px; }
+.texto-saben p { font-size: var(--step-lead); line-height: 1.4; break-inside: avoid; margin-bottom: 26px; }
+.texto-saben strong { font-weight: 600; }
+
+.notas { padding: 20vh var(--margen); background: #2d2522; color: #ebe5d9; }
+.notas-intro { margin-top: 24px; max-width: 40ch; font-size: var(--step-lead); color: #c9c0b2; }
+.lista-notas { margin-top: 64px; display: grid; gap: 48px; max-width: 780px; }
+.nota-voz { display: grid; grid-template-columns: 180px 1fr; column-gap: 28px; row-gap: 10px; align-items: center; }
+.nota-meta { font-size: 15px; color: #c9c0b2; grid-column: 1 / -1; }
+.onda { display: flex; align-items: center; gap: 3px; height: 44px; }
+.onda span { flex: 1; background: #c9c0b2; min-height: 3px; }
+.nota-voz:nth-child(n+5) .onda span { background: #b84a3c; }
+.nota-texto { font-size: var(--step-lead); line-height: 1.35; min-height: 1.35em; }
+.nota-voz:last-child .nota-texto { color: #c9c0b2; font-style: italic; }
+
+.dibujos { padding: 20vh var(--margen); background: #24201d; color: #ebe5d9; }
+.lamina-fila { margin-top: 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 28px; align-items: start; }
+.lamina { margin: 0; }
+.lamina:nth-child(1) { transform: rotate(-2deg); }
+.lamina:nth-child(2) { transform: rotate(1.5deg) translateY(40px); }
+.lamina:nth-child(3) { transform: rotate(-1deg) translateY(10px); }
+.lamina svg { width: 100%; height: auto; }
+.lamina figcaption { margin-top: 14px; font-size: 15px; color: #c9c0b2; }
+
+.sebusca { padding: 20vh var(--margen); background: #45473f; color: #ebe5d9; }
+.carteles { margin-top: 64px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 44px); }
+.cartel { background: #efeadc; color: #0a0a0a; padding: 22px 22px 0; transform: rotate(var(--giro)); }
+.cartel h3 { font-size: clamp(1.75rem, 2.8vw, 2.6rem); font-weight: 600; letter-spacing: -0.03em; text-align: center; }
+.cartel-foto { margin: 16px 0; aspect-ratio: 3 / 4; overflow: hidden; filter: grayscale(1) contrast(1.15); }
+.cartel-foto svg { width: 100%; height: 100%; }
+.cartel p { font-size: 17px; line-height: 1.4; }
+.tiras { display: flex; margin: 18px -22px 0; }
+.tiras span { flex: 1; writing-mode: vertical-rl; font-size: 13px; padding: 10px 0; text-align: center; background: #efeadc; box-shadow: inset 1px 0 0 #b9b2a2; }
+.tiras span:nth-child(3) { visibility: hidden; }
+
+.llamada { height: 300vh; background: #0e0f0f; color: #d7d2c6; }
+.llamada-fijo { position: sticky; top: 0; min-height: 100svh; padding: 10vh var(--margen); display: flex; flex-direction: column; justify-content: center; }
+.llamada h2 { font-size: clamp(1.9rem, 4.4vw, 4.4rem); }
+.transcripcion { list-style: none; margin: 40px 0 0; padding: 0; max-width: 900px; }
+.transcripcion li { display: grid; grid-template-columns: 130px 1fr; gap: 20px; font-size: var(--step-body); line-height: 1.35; padding: 4px 0; opacity: 0; transform: translateY(8px); transition: opacity 360ms var(--ease), transform 360ms var(--ease); }
+.transcripcion li.vista { opacity: 1; transform: none; }
+.transcripcion .quien { color: #8f8a80; }
+.transcripcion li.fin { display: block; margin-top: 24px; color: #b84a3c; }
+.calma .llamada { height: auto; }
+.calma .llamada-fijo { position: static; padding: 18vh var(--margen); }
+
+.contrato { padding: 20vh var(--margen); background: #151414; }
+.documento { max-width: 760px; margin: 0 auto; background: #e8e2d4; color: #0a0a0a; padding: clamp(28px, 6vw, 80px); }
+.documento h2 { font-size: clamp(2rem, 4vw, 3.4rem); text-shadow: none; }
+.clausulas { margin: 40px 0 0; padding-left: 1.4em; }
+.clausulas li { font-size: var(--step-body); line-height: 1.5; margin-bottom: 16px; }
+.clausula-fuerte { font-weight: 600; font-size: var(--step-lead); }
+.leido { margin-top: 36px; font-style: italic; min-height: 1.5em; }
+.firmas { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-top: 40px; }
+.firmas p { font-size: 15px; color: var(--muted); margin-top: 6px; }
+.firma-trazo { width: 100%; height: auto; }
+.firma-trazo path { fill: none; stroke: #1d2a5a; stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 760; stroke-dashoffset: 760; transition: stroke-dashoffset 2.4s cubic-bezier(0.6, 0, 0.3, 1); }
+.firma-trazo.firmada path, .calma .firma-trazo path { stroke-dashoffset: 0; }
+
+.cristal { height: 340vh; background: #030303; }
+.cristal-fijo { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+#vaho { width: 100%; height: 100%; display: block; }
+.cristal-pie { position: absolute; left: var(--margen); bottom: 8vh; max-width: 30ch; font-size: var(--step-lead); color: #bdb6aa; transition: opacity 600ms; }
+.calma .cristal { height: 220vh; }
+
+.rastro { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 30; }
+.puntero-lento, .puntero-lento * { cursor: none !important; }
+.grano { position: fixed; inset: -50%; pointer-events: none; z-index: 29; opacity: 0; mix-blend-mode: overlay; transition: opacity 1.2s; animation: grano 0.5s steps(3) infinite; }
+html[data-acto="3"] .grano, html[data-acto="4"] .grano, html[data-acto="5"] .grano { opacity: 0.16; }
+@keyframes grano { 33% { transform: translate(-7%, 4%); } 66% { transform: translate(5%, -6%); } }
+
+@media (max-width: 820px) {
+  .texto-saben { columns: 1; }
+  .nota-voz { grid-template-columns: 1fr; }
+  .lamina-fila, .carteles { grid-template-columns: 1fr; gap: 48px; }
+  .lamina:nth-child(2) { transform: rotate(1.5deg); }
+  .transcripcion li { grid-template-columns: 1fr; gap: 0; }
+  .firmas { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grano { animation: none; }
+  .transcripcion li, .firma-trazo path { transition: none; }
+}

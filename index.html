@@ -305,7 +305,76 @@
   </section>
 </div>
 
+<!-- ACTO 3 · Extraño de verdad -->
+<div class="acto acto-3" data-acto="3">
+  <section class="hora" id="hora" aria-label="La hora">
+    <div class="hora-fijo">
+      <p class="hora-grande" id="hora-texto">Son las 05:40.</p>
+      <p class="hora-pregunta" id="hora-pregunta" data-roto>¿Por qué sigues despierto?</p>
+      <p class="hora-pie" id="hora-pie"></p>
+    </div>
+  </section>
+
+  <section class="saben" id="saben" aria-labelledby="titulo-saben">
+    <h2 id="titulo-saben" data-glitch>Más preguntas frecuentes</h2>
+    <div class="texto-saben" id="texto-saben"></div>
+  </section>
+
+  <section class="notas" id="notas" aria-labelledby="titulo-notas">
+    <h2 id="titulo-notas">Notas de voz que nadie escuchó</h2>
+    <p class="notas-intro">Encontradas en un teléfono, en el cajón de la cocina de la casa 14. Transcripción literal.</p>
+    <div class="lista-notas" id="lista-notas"></div>
+  </section>
+
+  <section class="dibujos" id="dibujos" aria-labelledby="titulo-dibujos">
+    <h2 id="titulo-dibujos">Encontrado en el cuarto de los niños</h2>
+    <div class="lamina-fila" id="laminas"></div>
+  </section>
+
+  <section class="sebusca" id="sebusca" aria-labelledby="titulo-sebusca">
+    <h2 id="titulo-sebusca">Antiguos propietarios</h2>
+    <div class="carteles" id="carteles"></div>
+  </section>
+
+  <section class="llamada" id="llamada" aria-labelledby="titulo-llamada">
+    <div class="llamada-fijo">
+      <h2 id="titulo-llamada">Llamada al 112 · 19 de marzo · 03:00</h2>
+      <ol class="transcripcion" id="transcripcion"></ol>
+    </div>
+  </section>
+
+  <section class="contrato" id="contrato" aria-labelledby="titulo-contrato">
+    <article class="documento">
+      <h2 id="titulo-contrato">Contrato de reserva · Casa 14</h2>
+      <ol class="clausulas">
+        <li>El comprador acepta la vivienda en el estado en que se encuentra, con todo lo que contiene.</li>
+        <li>La casa se entrega amueblada. Si los muebles cambian de sitio por la noche, no se volverán a colocar.</li>
+        <li>La puerta del fondo del pasillo permanecerá cerrada. El comprador no contará las puertas.</li>
+        <li>Los ocupantes anteriores conservan el uso de la vivienda. El comprador se compromete a no mirarlos directamente.</li>
+        <li class="clausula-fuerte">El comprador no podrá abandonar la propiedad.</li>
+        <li>Esta reserva no se puede cancelar. Se considera firmada en el momento de su lectura.</li>
+      </ol>
+      <p class="leido" id="leido"></p>
+      <div class="firmas">
+        <div><svg class="firma-trazo" viewBox="0 0 260 80" aria-hidden="true"><path d="M8 58 C30 20 44 18 46 44 C48 64 60 30 74 26 C84 24 80 60 92 56 C108 50 112 18 126 20 C140 22 128 66 146 60 C160 54 170 30 186 32 C198 34 190 58 206 54 C222 50 236 36 252 40"/></svg><p>Firma del comprador</p></div>
+        <div><svg class="firma-trazo" viewBox="0 0 260 80" aria-hidden="true"><path d="M8 58 C30 20 44 18 46 44 C48 64 60 30 74 26 C84 24 80 60 92 56 C108 50 112 18 126 20 C140 22 128 66 146 60 C160 54 170 30 186 32 C198 34 190 58 206 54 C222 50 236 36 252 40"/></svg><p>Firma de la promotora</p></div>
+      </div>
+    </article>
+  </section>
+
+  <section class="cristal" id="cristal" aria-label="El cristal">
+    <div class="cristal-fijo">
+      <canvas id="vaho" aria-hidden="true"></canvas>
+      <p class="cristal-pie" id="cristal-pie">Alguien ha respirado contra el cristal. Desde dentro.</p>
+      <p class="sr-solo">En el vaho aparecen dos manos que empujan desde el otro lado y unas letras escritas al revés: no entres, ya es tarde.</p>
+    </div>
+  </section>
+</div>
+
 </main>
+
+<canvas class="rastro" id="rastro" aria-hidden="true"></canvas>
+<div class="grano" aria-hidden="true"></div>
 
 <aside class="asesora" id="asesora" aria-live="polite" hidden>
   <div class="asesora-cara" id="asesora-cara" aria-hidden="true"></div>
@@ -322,6 +391,7 @@
 <script src="js/caras.js"></script>
 <script src="js/acto1.js"></script>
 <script src="js/acto2.js"></script>
+<script src="js/acto3.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

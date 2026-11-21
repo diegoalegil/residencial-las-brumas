@@ -42,9 +42,14 @@
     const boca = `
       <path d="M${150 - ancho} 252 Q150 ${arriba} ${150 + ancho} 252 Q150 ${abajo} ${150 - ancho} 252Z" fill="#5e2522"/>
       <path d="M${150 - ancho + 5} 253 Q150 ${arriba} ${150 + ancho - 5} 253 Q150 ${arriba + 7 + k * 0.5} ${150 - ancho + 5} 253Z" fill="#f2eee5"/>`;
-    const raya = o.raya ? `<g stroke="#0b0b0b" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.92">
-      <path d="M82 140 L224 250 M90 260 L218 128 M78 196 L228 186 M96 120 L206 270 M70 230 L230 160 M120 110 L180 290 M100 290 L210 100"/>
-      <path d="M86 170 C140 150 170 240 224 214 C190 250 110 230 86 170Z" stroke-width="4"/></g>` : '';
+    let raya = '';
+    if (o.raya) {
+      let d = 'M84 128', y = 128, sx = 1;
+      for (let i = 0; i < 26; i++) { y += 6 + (i * 37 % 5); sx = -sx; d += ` L${150 + sx * (60 + (i * 53 % 17))} ${y + (i * 29 % 9) - 4}`; }
+      let d2 = 'M100 290';
+      for (let i = 0; i < 14; i++) d2 += ` L${96 + (i * 71 % 112)} ${130 + (i * 43 % 150)}`;
+      raya = `<g fill="none" stroke="#0b0b0b" stroke-linecap="round" stroke-linejoin="round" opacity="0.93"><path d="${d}" stroke-width="8"/><path d="${d2}" stroke-width="3.5"/></g>`;
+    }
     return `<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" class="cara" data-vecino="${nombre}" aria-hidden="true">
       <rect width="300" height="400" fill="${o.fondo}"/>
       ${pelo(o, true)}
