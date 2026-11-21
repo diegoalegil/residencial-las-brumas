@@ -176,6 +176,7 @@
     if (fase === 'negro' || (fase === 'cara' && !calma)) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h); return; }
 
     actualizarLamparas(t, fase);
+    LB.oscuridad.luz = lamp.reduce((s, l) => s + l.nivel, 0) / lamp.length;
     cam.z = 12.5 * gsap.parseEase('power1.inOut')(tramo(calma ? Math.round(P * 14) / 14 : P, 0.04, 0.5));
     cam.x = calma ? 0 : Math.sin(t / 1900) * 0.025;
     cam.y = Math.sin(cam.z * 4.2) * 0.022;

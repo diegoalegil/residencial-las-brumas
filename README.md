@@ -6,7 +6,7 @@ Empieza como la web de una promotora cualquiera: treinta y dos casas en las medi
 
 ## Cómo verla
 
-- Mejor de noche, con auriculares y el sonido encendido. Viene apagado: se enciende con el botón de abajo a la izquierda o con la tecla **M**.
+- Mejor de noche, con auriculares y el sonido encendido. Viene apagado: se enciende con el botón de abajo a la izquierda o con la tecla **M**. Al encenderlo se descargan los sonidos (unos 4 MB) y la web empieza a sonar. El sonido cambia en cada acto, hay voces y, con auriculares, algunas se oyen a un lado o detrás de ti.
 - Baja despacio. Varias escenas se quedan fijas mientras haces scroll y avanzan con él.
 - Funciona en el móvil y en el ordenador.
 - Si en tu sistema tienes activada la reducción de movimiento, la historia es la misma, con menos movimiento y sin sustos de golpe.
@@ -20,6 +20,8 @@ Residencial Las Brumas es una ficción. Ninguna casa, persona ni empresa de esta
 ## Privacidad
 
 La web no pide permisos, no usa cookies y no envía nada a ningún sitio. Lo que dice de ti lo lee tu propio navegador en ese momento, sin preguntarte, y no sale de él: la hora y la zona horaria, el tipo de aparato y de navegador, el tamaño de la pantalla, si tienes el modo oscuro, la batería (solo en los navegadores que la dan sin pedir permiso), la página desde la que llegaste, si cambias de pestaña, cómo haces scroll o mueves el ratón y el tiempo que llevas dentro.
+
+Los sonidos se descargan de la propia web, y solo si los enciendes.
 
 Lo único que guarda, también en tu navegador, es cuándo viniste por primera y por última vez, cuántas veces has entrado y hasta dónde llegaste. Si copias un texto de la página, a la copia se le añade una línea; la web nunca lee lo que tienes copiado.
 
@@ -43,4 +45,15 @@ python3 -m http.server 8000
 # http://localhost:8000
 ```
 
-Las imágenes y los sonidos se dibujan y se sintetizan en el navegador. Usa GSAP y ScrollTrigger para las animaciones y la tipografía STIX Two Text.
+Las imágenes se dibujan en el navegador. Los sonidos están en `audio/` (camas, efectos y voces, en MP3) y solo se descargan al encender el sonido. Usa GSAP y ScrollTrigger para las animaciones y la tipografía STIX Two Text.
+
+## Créditos de sonido
+
+La música, los ambientes y los efectos están hechos para esta web con muestras grabadas de bibliotecas libres, más algunos sonidos hechos a mano (los pájaros, la respiración, el bolígrafo, la nevera, el fluorescente y los tonos del teléfono). Las muestras son de dominio público (CC0), así que no piden atribución, pero se agradecen:
+
+- [VSCO 2 Community Edition](https://versilian-studios.com/vsco-community/), de Versilian Studios: secciones de cuerda y bombo de orquesta.
+- [VCSL](https://github.com/sgossner/VCSL), Versilian Community Sample Library: marimba, vibráfono, carillón, piano vertical, gong, bloque de madera y tambor de océano.
+- Splendid Grand Piano: muestras de AKAI liberadas al dominio público.
+- [Kenney](https://kenney.nl): pasos, puertas, crujidos, golpes y clics.
+- [Sonic Pi](https://sonic-pi.net): zumbidos y ambientes.
+- Body Percussion (CC0): el latido y la mano contra el cristal.
