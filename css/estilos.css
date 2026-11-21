@@ -531,3 +531,16 @@ html[data-acto="3"] .grano, html[data-acto="4"] .grano, html[data-acto="5"] .gra
 @media (prefers-reduced-motion: reduce) {
   .velo, .centro, .rotulo { transition: none; }
 }
+
+/* ---------- Botón de sonido ---------- */
+.sonido {
+  position: fixed; left: 16px; bottom: 16px; z-index: 45;
+  min-height: 44px; padding: 0 16px; border: 0; border-radius: 0;
+  background: var(--ink); color: var(--papel); font-size: 15px; cursor: pointer;
+  transition: background-color 200ms, color 200ms, transform 140ms var(--ease);
+}
+.sonido[hidden] { display: none; }
+.sonido:hover { background: #2c2f2e; }
+.sonido:active { transform: scale(0.97); }
+.sonido[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+html[data-acto="4"] .sonido, html[data-acto="5"] .sonido { background: #151515; color: #8d887f; }
