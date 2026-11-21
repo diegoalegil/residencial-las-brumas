@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residencial Las Brumas · Tu nuevo hogar te está esperando</title>
+<meta name="description" content="Treinta y dos casas en las medianías, sobre el mar de nubes. Reserva tu visita a la casa piloto.">
+<meta name="theme-color" content="#dedad3">
+<meta property="og:title" content="Residencial Las Brumas">
+<meta property="og:description" content="Tu nuevo hogar te está esperando.">
+<link rel="icon" id="icono" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<a class="saltar" href="#reserva">Saltar a la reserva</a>
+
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="pino" viewBox="0 0 40 100"><path d="M20 0 L34 34 H27 L38 62 H29 L40 92 H22 V100 H18 V92 H0 L11 62 H2 L13 34 H6Z"/></symbol>
+</svg>
+
+<main id="principal">
+
+<!-- ACTO 1 · La promoción -->
+<div class="acto acto-1" data-acto="1">
+  <div class="split">
+    <div class="columna">
+
+      <section class="hero" id="inicio" aria-labelledby="titulo-hero">
+        <div class="tarjeta">
+          <div class="toldo" aria-hidden="true"></div>
+          <p class="marca"><span>Residencial</span> Las Brumas</p>
+          <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+          <h1 id="titulo-hero" class="titulo-hero">Tu nuevo hogar te <span class="verbo">está</span> esperando.</h1>
+          <p class="entrada">Treinta y dos casas en las medianías, a 900 metros, justo encima del mar de nubes. Entrega de llaves en primavera.</p>
+          <a class="boton" href="#reserva">Reserva tu visita</a>
+          <nav class="enlaces-hero" aria-label="Secciones">
+            <a href="#galeria">La casa piloto</a>
+            <a href="#precios">Precios</a>
+            <a href="#preguntas">Preguntas</a>
+          </nav>
+          <p class="has-vuelto" aria-hidden="true">Has vuelto.</p>
+        </div>
+      </section>
+
+      <section class="ventajas" id="ventajas" aria-labelledby="titulo-ventajas">
+        <div class="hoja" data-entra>
+          <h2 id="titulo-ventajas">Lo que viene con la casa</h2>
+          <div class="grupo">
+            <h3>El entorno</h3>
+            <dl>
+              <div class="fila"><dt>Zonas verdes</dt><dd>40.000 m²</dd><p>Pinar propio, senderos y un mirador sobre el mar de nubes.</p></div>
+              <div class="fila"><dt>Silencio</dt><dd>0 coches</dd><p>Las calles interiores son peatonales. Por la noche solo se oye el pinar.</p></div>
+              <div class="fila"><dt>Colegio</dt><dd>a 6 min</dd><p>Infantil y primaria, con transporte desde la entrada.</p></div>
+            </dl>
+          </div>
+          <div class="grupo">
+            <h3>La comunidad</h3>
+            <dl>
+              <div class="fila"><dt>Seguridad</dt><dd>24 h</dd><p>64 cámaras y un vigilante en la entrada. Ningún punto ciego.</p></div>
+              <div class="fila"><dt>Vecinos encantadores</dt><dd>siempre en casa</dd><p>Una comunidad pequeña, de las de antes. Aquí todo el mundo se conoce.</p></div>
+              <div class="fila"><dt>Club social</dt><dd>incluido</dd><p>Piscina climatizada, biblioteca y un salón para los cumpleaños.</p></div>
+            </dl>
+          </div>
+          <div class="grupo">
+            <h3>La casa</h3>
+            <dl>
+              <div class="fila"><dt>Aerotermia</dt><dd>incluida</dd><p>Calefacción por suelo radiante en las dos plantas.</p></div>
+              <div class="fila"><dt>Fibra</dt><dd>1 Gb</dd><p>Instalada y lista el día de la entrega.</p></div>
+              <div class="fila"><dt>Garaje</dt><dd>2 plazas</dd><p>Con trastero y punto de carga.</p></div>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section class="cifras" id="cifras" aria-labelledby="titulo-cifras">
+        <h2 id="titulo-cifras" data-entra>Las Brumas en cifras</h2>
+        <dl class="lineas">
+          <div data-entra><dt>32</dt><dd>casas unifamiliares, cada una con jardín propio.</dd></div>
+          <div data-entra><dt>900 m</dt><dd>sobre el mar: frescor en verano y la niebla a la altura de la ventana.</dd></div>
+          <div data-entra><dt>4 min</dt><dd>andando hasta el pinar desde cualquier puerta.</dd></div>
+          <div data-entra><dt>100 %</dt><dd>de las casas de la primera fase, ya habitadas.</dd></div>
+          <div data-entra class="grieta-cifra"><dt>0</dt><dd>vecinos que se han ido.</dd></div>
+        </dl>
+      </section>
+
+      <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+
+      <section class="galeria" id="galeria" aria-labelledby="titulo-galeria">
+        <h2 id="titulo-galeria" data-entra>Pasea por la casa piloto</h2>
+        <p class="nota" data-entra>Amueblada y lista para entrar a vivir. Toca la imagen para pasar a la siguiente.</p>
+        <button class="marco" type="button" aria-label="Siguiente estancia de la casa piloto" data-entra>
+          <span class="estancias" id="estancias"></span>
+        </button>
+        <p class="pie-marco" id="pie-marco" aria-live="polite">Salón · luz de mañana</p>
+      </section>
+
+      <section class="opinion" id="opinion" aria-label="Lo que dice una vecina">
+        <div class="retrato" id="retrato" data-entra></div>
+        <blockquote data-entra>
+          <p>Llegamos en marzo con dos maletas y no hemos vuelto a salir de aquí. No nos hace falta nada más.</p>
+          <footer>Marta, casa 14 · vecina desde 1987</footer>
+        </blockquote>
+      </section>
+
+      <section class="precios" id="precios" aria-labelledby="titulo-precios">
+        <h2 id="titulo-precios" data-entra>Precios</h2>
+        <div class="lista-precios">
+          <div class="grupo" data-entra>
+            <h3>Tres dormitorios</h3>
+            <div class="item"><span class="nombre">Casa Brezo</span><span class="precio">289.000 €</span><p>128 m² en dos plantas y parcela de 300 m².</p></div>
+            <div class="item"><span class="nombre">Casa Laurel</span><span class="precio">318.000</span><p>142 m², con buhardilla y porche al jardín.</p></div>
+          </div>
+          <div class="grupo" data-entra>
+            <h3>Cuatro dormitorios</h3>
+            <div class="item"><span class="nombre">Casa Mirador</span><span class="precio">362.000 €</span><p>165 m² y vistas abiertas al mar de nubes.</p></div>
+            <div class="item"><span class="nombre">Casa Tejo</span><span class="precio">379.000</span><p>171 m², en la esquina que da al pinar.</p></div>
+          </div>
+          <div class="grupo" data-entra>
+            <h3>Casa piloto</h3>
+            <div class="item item-14"><span class="nombre">Casa 14</span><span class="precio">96.000 €</span><p>Amueblada, entrega inmediata. Disponible otra vez.</p></div>
+          </div>
+          <p class="letra-pequena" data-entra>IGIC incluido. Reserva con 3.000 €, que se descuentan del precio final.</p>
+        </div>
+      </section>
+
+      <div class="escenario-movil" data-clon="casa" aria-hidden="true"></div>
+
+      <section class="preguntas" id="preguntas" aria-labelledby="titulo-preguntas">
+        <h2 id="titulo-preguntas" data-entra>Preguntas frecuentes</h2>
+        <div class="texto-preguntas">
+          <p data-entra><strong>¿Cuándo se entregan las llaves?</strong> En primavera, con la segunda fase. La casa piloto se entrega en el acto.</p>
+          <p data-entra><strong>¿Se puede personalizar la casa?</strong> Sí: acabados, cocina y distribución de la planta alta, hasta tres meses antes de la entrega.</p>
+          <p data-entra><strong>¿Hay financiación?</strong> Trabajamos con varias entidades y te acompañamos con la hipoteca, sin coste.</p>
+          <p data-entra><strong>¿Qué gastos de comunidad hay?</strong> 68 € al mes: jardines, vigilancia, alumbrado y el club social.</p>
+          <p data-entra><strong>¿Se admiten mascotas?</strong> Sí. Los perros no suelen querer entrar en la casa piloto, pero acaban acostumbrándose.</p>
+          <p data-entra><strong>¿Hay niebla todo el año?</strong> Casi todas las tardes. Es lo que le da nombre a Las Brumas, y los vecinos dicen que acaba haciendo compañía.</p>
+          <p data-entra><strong>¿Hay cobertura en toda la urbanización?</strong> En toda, salvo en el pasillo de la casa 14. Estamos en ello.</p>
+        </div>
+      </section>
+
+      <section class="reserva" id="reserva" aria-labelledby="titulo-reserva">
+        <h2 id="titulo-reserva" data-entra>Reserva tu visita</h2>
+        <p data-entra>Elige día y hora. La visita dura cuarenta minutos y empieza en la casa piloto. No te pedimos ningún dato.</p>
+        <form class="cita" id="cita" data-entra>
+          <fieldset>
+            <legend>Día</legend>
+            <div class="opciones" id="dias"></div>
+          </fieldset>
+          <fieldset>
+            <legend>Hora</legend>
+            <div class="opciones" id="horas"></div>
+          </fieldset>
+          <button class="boton" type="submit">Reservar la visita</button>
+          <p class="confirmacion" id="confirmacion" aria-live="polite"></p>
+        </form>
+      </section>
+
+    </div>
+
+    <div class="escenario" aria-hidden="true">
+      <svg class="casa" id="casa" viewBox="0 0 600 800" preserveAspectRatio="xMidYMid slice">
+        <rect class="c-cielo" width="600" height="800"/>
+        <circle class="c-astro" cx="455" cy="165" r="44"/>
+        <path class="c-monte" d="M0 410 L70 372 L150 392 L235 330 L320 365 L400 318 L480 356 L560 326 L600 342 V800 H0Z"/>
+        <g class="c-niebla c-niebla-a">
+          <rect x="-140" y="362" width="420" height="40" rx="20"/>
+          <rect x="250" y="386" width="520" height="36" rx="18"/>
+          <rect x="-60" y="414" width="380" height="28" rx="14"/>
+        </g>
+        <g class="c-pinos-lejos">
+          <use href="#pino" x="-8" y="378" width="30" height="78"/>
+          <use href="#pino" x="20" y="392" width="26" height="66"/>
+          <use href="#pino" x="46" y="370" width="32" height="88"/>
+          <use href="#pino" x="78" y="396" width="24" height="62"/>
+          <use href="#pino" x="104" y="384" width="30" height="76"/>
+          <use href="#pino" x="140" y="400" width="24" height="60"/>
+          <use href="#pino" x="430" y="388" width="28" height="72"/>
+          <use href="#pino" x="458" y="374" width="32" height="86"/>
+          <use href="#pino" x="494" y="394" width="26" height="66"/>
+          <use href="#pino" x="520" y="380" width="30" height="80"/>
+          <use href="#pino" x="552" y="392" width="28" height="70"/>
+          <use href="#pino" x="578" y="378" width="30" height="82"/>
+        </g>
+        <g class="c-figura-fondo" transform="rotate(-9 134 452)">
+          <ellipse cx="134" cy="452" rx="7.5" ry="10"/>
+          <path d="M130 462 H138 L142 504 L146 598 H141 L136 520 L133 598 H128 L126 504Z"/>
+          <path d="M127 470 L119 530 L115 586 L118 587 L124 532 L131 478Z"/>
+          <path d="M141 470 L149 530 L153 586 L150 587 L144 532 L137 478Z"/>
+        </g>
+        <path class="c-cesped" d="M0 598 C150 580 420 576 600 596 V800 H0Z"/>
+        <g class="c-casa">
+          <rect class="c-muro" x="170" y="440" width="290" height="240"/>
+          <rect class="c-madera" x="345" y="446" width="115" height="234"/>
+          <path class="c-listones" d="M357 446 V680 M369 446 V680 M381 446 V680 M393 446 V680 M405 446 V680 M417 446 V680 M429 446 V680 M441 446 V680 M453 446 V680"/>
+          <polygon class="c-tejado" points="148,452 315,330 482,452"/>
+          <polygon class="c-muro" points="188,448 315,356 442,448"/>
+          <circle class="c-ventana c-buhardilla" cx="315" cy="410" r="15"/>
+          <rect class="c-ventana c-ventana-alta" x="196" y="470" width="120" height="82"/>
+          <g class="c-fig-ventana">
+            <ellipse cx="282" cy="494" rx="9" ry="11"/>
+            <path d="M268 552 C268 520 274 506 282 506 C290 506 296 520 296 552Z"/>
+          </g>
+          <rect class="c-cortina" x="196" y="470" width="32" height="82"/>
+          <rect class="c-ventana c-luz" x="372" y="478" width="62" height="66"/>
+          <rect class="c-ventana" x="192" y="585" width="128" height="95"/>
+          <path class="c-carpinteria" d="M235 585 V680 M278 585 V680 M256 470 V552"/>
+          <rect class="c-hueco" x="372" y="590" width="56" height="90"/>
+          <rect class="c-puerta" x="372" y="590" width="56" height="90"/>
+          <rect class="c-placa" x="436" y="600" width="18" height="13"/>
+          <text class="c-numero" x="445" y="610.5" text-anchor="middle">14</text>
+          <rect class="c-tejado" x="449" y="456" width="10" height="5"/>
+          <circle class="c-camara" cx="454" cy="466" r="6"/>
+          <circle class="c-led" cx="454" cy="467" r="1.6"/>
+          <polygon class="c-camino" points="380,680 420,680 470,800 330,800"/>
+        </g>
+        <rect class="c-seto" x="-10" y="660" width="176" height="26" rx="13"/>
+        <rect class="c-seto" x="468" y="662" width="150" height="26" rx="13"/>
+        <g class="c-pinos-cerca">
+          <use href="#pino" x="-70" y="230" width="170" height="430"/>
+          <use href="#pino" x="-20" y="420" width="90" height="250"/>
+          <use href="#pino" x="476" y="270" width="160" height="400"/>
+          <use href="#pino" x="532" y="410" width="90" height="250"/>
+        </g>
+        <g class="c-cartel">
+          <rect class="c-poste" x="96" y="700" width="5" height="70"/>
+          <rect class="c-tabla" x="40" y="688" width="118" height="40"/>
+          <text class="c-texto-cartel" x="99" y="713" text-anchor="middle">Casa piloto 14</text>
+        </g>
+        <g class="c-niebla c-niebla-b">
+          <rect x="-200" y="724" width="520" height="40" rx="20"/>
+          <rect x="300" y="750" width="560" height="44" rx="22"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <footer class="pie" aria-label="Pie de la promoción">
+    <div class="pie-foto" data-clon="ventana" aria-hidden="true"></div>
+    <div class="pie-menu">
+      <p class="marca"><span>Residencial</span> Las Brumas</p>
+      <nav aria-label="Pie">
+        <a href="#inicio">Inicio</a>
+        <a href="#galeria">La casa piloto</a>
+        <a href="#precios">Precios</a>
+        <a href="#preguntas">Preguntas</a>
+        <a href="#reserva">Reserva</a>
+      </nav>
+      <div class="pie-datos">
+        <p>Oficina de ventas<br>Camino de la Neblina, s/n<br>Todos los días, de 10:00 a 19:00</p>
+        <p>Casa piloto<br>Calle del Pinar, 14<br>Abierta siempre</p>
+      </div>
+      <p class="legal">© Residencial Las Brumas. Las imágenes son orientativas.</p>
+    </div>
+  </footer>
+</div>
+
+</main>
+
+<aside class="asesora" id="asesora" aria-live="polite" hidden>
+  <div class="asesora-cara" id="asesora-cara" aria-hidden="true"></div>
+  <div class="asesora-texto">
+    <p class="asesora-nombre">Marta · asesora de ventas</p>
+    <p class="asesora-mensaje" id="asesora-mensaje"></p>
+  </div>
+  <button class="asesora-cerrar" type="button" aria-label="Cerrar el mensaje">×</button>
+</aside>
+
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/comun.js"></script>
+<script src="js/caras.js"></script>
+<script src="js/acto1.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
