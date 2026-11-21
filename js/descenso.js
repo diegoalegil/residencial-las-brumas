@@ -226,6 +226,8 @@
     };
     const final = document.getElementById('bienvenido');
     ScrollTrigger.create({ trigger: '.bienvenido', start: 'top 80%', onEnter: () => { contar(); final.classList.add('vista'); }, onEnterBack: contar });
+    /* Mientras se ve el final, Marta sale arriba para no tapar «Salir de Las Brumas» */
+    ScrollTrigger.create({ trigger: '.bienvenido', start: 'top 80%', end: 'bottom top', toggleClass: { targets: raiz, className: 'al-final' } });
     let activa = false, intentos = 0, yFin = 0, inicio = 0, tirando = false, reloj = 0;
     if (calma) salir.textContent = 'Volver al principio';
     function onScroll() {

@@ -257,11 +257,11 @@
     const r = semilla(5);
     const manchas = Array.from({ length: 12 }, () => ({ x: (r() - 0.5) * 0.8, y: (r() - 0.5) * 0.7, s: 0.22 + r() * 0.2 }));
     const manos = [{ x: 0.245, y: 0.40, umbral: 0.42, t: 0 }, { x: 0.70, y: 0.40, umbral: 0.54, t: 0 }];
-    let w = 0, h = 0, p = 0, visible = false, pintado = '';
+    let w = 0, h = 0, p = 0, visible = false, pintado = '', ultimo = 0;
+    /* El vaho es difuso: se pinta a la mitad de resolución y el navegador lo escala; las letras, escritas con el dedo, ya son borrosas */
     const medir = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
-      w = cv.width = Math.round(cv.clientWidth * dpr);
-      h = cv.height = Math.round(cv.clientHeight * dpr);
+      w = cv.width = Math.round(cv.clientWidth * 0.5);
+      h = cv.height = Math.round(cv.clientHeight * 0.5);
       pintado = '';
     };
     medir(); addEventListener('resize', medir);
@@ -303,6 +303,9 @@
     const pintar = (t) => {
       requestAnimationFrame(pintar);
       if (!visible || !w) return;
+      /* Respira despacio: con unos 30 fotogramas por segundo basta */
+      if (t - ultimo < 25) return;
+      ultimo = t;
       /* Con movimiento reducido no respira y todo cambia por tramos: solo se repinta si algo cambia */
       const clave = calma ? [w, h, p < 0.15, p < 0.4, p < 0.7, manos[0].t > 0, manos[1].t > 0].join() : '';
       if (calma && clave === pintado) return;

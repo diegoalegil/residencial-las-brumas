@@ -155,7 +155,8 @@
     }, { rootMargin: '100px 0px' }).observe(caja);
 
     /* La 64: la puerta de detrás está vacía hasta que avanzas (a la vez que el relé del sonido).
-       Si la cámara aún no se ve entera, espera a que se vea. */
+       Si la puerta aún no se ve, espera a que se vea: está en la mitad de arriba de la imagen,
+       así que basta con ver el 45 % de la cámara (en la mayoría de móviles coincide con el relé). */
     let pasa = false, enVista = false, hecho = false;
     const aparecer = () => {
       if (hecho || !pasa || !enVista) return;
@@ -164,7 +165,7 @@
       tu.classList.add('corte');
       setTimeout(() => { tu.classList.add('aparece'); tu.classList.remove('corte'); }, 200);
     };
-    new IntersectionObserver(es => { enVista = es[0].intersectionRatio >= 0.6; aparecer(); }, { threshold: [0, 0.6, 1] }).observe(tu);
+    new IntersectionObserver(es => { enVista = es[0].intersectionRatio >= 0.45; aparecer(); }, { threshold: [0, 0.45, 1] }).observe(tu);
     ScrollTrigger.create({
       trigger: '.seguridad', start: 'top 60%', end: 'bottom 30%',
       onEnter: () => LB.precargar(tu.querySelectorAll('.cam-despues')),
