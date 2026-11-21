@@ -208,7 +208,7 @@
   function poner(si) {
     encendido = si;
     boton.setAttribute('aria-pressed', String(si));
-    boton.textContent = si ? 'Sonido: encendido · M' : 'Sonido: apagado · M';
+    boton.textContent = (si ? 'Sonido: encendido' : 'Sonido: apagado') + (LB.tactil ? '' : ' · M');
     if (si) {
       if (!ac) montar();
       ac.resume();
@@ -225,6 +225,7 @@
 
   LB.sonido = function () {
     boton.hidden = false;
+    if (LB.tactil) boton.textContent = 'Sonido: apagado';
     boton.addEventListener('click', () => poner(!encendido));
     addEventListener('keydown', e => {
       if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey && !e.altKey && !/input|textarea|select/i.test(e.target.tagName)) poner(!encendido);

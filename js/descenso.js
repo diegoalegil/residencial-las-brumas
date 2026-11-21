@@ -50,15 +50,20 @@
       if (fase === 'apagon') { l.nivel += (0 - l.nivel) * 0.25; return; }
       if (fase === 'calma' || calma) { l.nivel += ((fase === 'calma' ? 1.45 : 1.05) - l.nivel) * 0.2; l.on = true; return; }
       if (t > l.hasta) {
-        l.on = !l.on;
         const nervio = fase === 'figura' ? 0.5 : 1;
-        l.hasta = t + (l.on ? azar(1400, 5200) * nervio : azar(140, 520));
+        if (l.on) {
+          /* Un solo apagón a la vez y como mucho uno cada 0,7 s: nada de destellos seguidos */
+          if (t > proximoApagon && lamp.every(o => o.on)) {
+            l.on = false; l.hasta = t + azar(160, 520); proximoApagon = l.hasta + 700;
+          } else l.hasta = t + azar(400, 1600) * nervio;
+        } else { l.on = true; l.hasta = t + azar(1400, 5200) * nervio; }
       }
       const meta = l.on ? 0.92 + Math.sin(t / 90 + i) * 0.05 : 0.06;
       l.nivel += (meta - l.nivel) * 0.5;
     });
   }
-  function forzarApagon(i, t, ms) { lamp[i].on = false; lamp[i].hasta = t + ms; }
+  let proximoApagon = 0;
+  function forzarApagon(i, t, ms) { lamp[i].on = false; lamp[i].hasta = t + ms; proximoApagon = Math.max(proximoApagon, t + ms + 700); }
 
   /* La figura: miembros demasiado largos y pose a tirones */
   function nuevaPose(t, intensa) {
@@ -167,7 +172,7 @@
     if (fase === 'negro' || (fase === 'cara' && !calma)) { ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h); return; }
 
     actualizarLamparas(t, fase);
-    cam.z = 12.5 * gsap.parseEase('power1.inOut')(tramo(P, 0.04, 0.5));
+    cam.z = 12.5 * gsap.parseEase('power1.inOut')(tramo(calma ? Math.round(P * 14) / 14 : P, 0.04, 0.5));
     cam.x = calma ? 0 : Math.sin(t / 1900) * 0.025;
     cam.y = Math.sin(cam.z * 4.2) * 0.022;
     f = h * 0.82; cx = w / 2; cy = h * 0.47;
@@ -383,6 +388,8 @@
       onToggle: s => { activo = s.isActive || s.progress > 0 && s.progress < 1; }
     });
     new IntersectionObserver(es => { activo = es[0].isIntersecting; }).observe(cv);
+    let medido = false;
+    LB.alCambiarActo(n => { if (n === 4 && !medido) { medido = true; ScrollTrigger.refresh(); } });
     textos();
     pesadez();
     trampa();

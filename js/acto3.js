@@ -69,7 +69,8 @@
       caja.innerHTML = items.map(([p, r]) => `<p><strong>${p}</strong> ${r}</p>`).join('');
     };
     escribir();
-    ScrollTrigger.create({ trigger: '.saben', start: 'top bottom', onEnter: escribir, onEnterBack: escribir });
+    const reescribir = () => { const antes = caja.offsetHeight; escribir(); if (caja.offsetHeight !== antes) ScrollTrigger.refresh(); };
+    ScrollTrigger.create({ trigger: '.saben', start: 'top bottom', onEnter: reescribir, onEnterBack: reescribir });
   }
 
   /* Notas de voz de Pilar */
@@ -98,13 +99,14 @@
     if (calma) return;
     lista.querySelectorAll('.nota-texto').forEach(p => {
       const completo = p.dataset.texto;
-      p.textContent = '';
-      p.setAttribute('aria-label', completo);
+      p.innerHTML = '<span class="ya"></span><span class="aun"></span>';
+      const ya = p.firstChild, aun = p.lastChild;
+      aun.textContent = completo;
       ScrollTrigger.create({
         trigger: p, start: 'top 82%', once: true,
         onEnter: () => {
           let i = 0;
-          const id = setInterval(() => { i += 2; p.textContent = completo.slice(0, i); if (i >= completo.length) clearInterval(id); }, 28);
+          const id = setInterval(() => { i += 2; ya.textContent = completo.slice(0, i); aun.textContent = completo.slice(i); if (i >= completo.length) clearInterval(id); }, 28);
         }
       });
     });
@@ -255,6 +257,7 @@
       onEnter: () => {
         const d = new Date();
         leido.textContent = `Leído el ${d.toLocaleDateString('es-ES')} a las ${LB.hora()}. Firmado.`;
+        leido.classList.add('listo');
       }
     });
     ScrollTrigger.create({
