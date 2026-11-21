@@ -51,7 +51,7 @@
   ];
 
   /* Lo que mira el ratón cuando se queda quieto encima de algo */
-  const VECINAS = { Marta: 'Ella', Lucía: 'Ella', Pilar: 'Ella' };
+  const VECINAS = { Marta: 'Ella', Lucía: 'Ella', Pilar: 'Ella', Amparo: 'Ella', Elena: 'Ella', Maribel: 'Ella' };
   const MIRA = {
     cam64: s => `Llevas ${s} segundos mirándote en la cámara 64. Fíjate mejor en lo que tienes detrás.`,
     'cartel:lucia': () => 'No mires tanto a Lucía. Se acuerda de las caras.',

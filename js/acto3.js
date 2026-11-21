@@ -454,13 +454,8 @@
     requestAnimationFrame(pintar);
   }
 
-  /* Grano y aberración de color que crecen */
+  /* Aberración de color que crece (el grano usa la textura de comun.js) */
   function grano() {
-    const c = document.createElement('canvas'); c.width = c.height = 160;
-    const x = c.getContext('2d'), img = x.createImageData(160, 160);
-    for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
-    x.putImageData(img, 0, 0);
-    document.querySelector('.grano').style.backgroundImage = `url(${c.toDataURL()})`;
     if (calma) { raiz.style.setProperty('--aberr', '1.5'); return; }
     gsap.fromTo(raiz, { '--aberr': 0 }, { '--aberr': 5, ease: 'none', scrollTrigger: { trigger: '.acto-3', start: 'top bottom', end: 'bottom bottom', scrub: true } });
   }

@@ -1,6 +1,6 @@
 /* Acto 2: algo no cuadra */
 (function () {
-  const { calma, tactil, azar, clamp } = LB;
+  const { calma, azar } = LB;
 
   /* Letras que se tuercen solas */
   function letras() {
@@ -48,14 +48,16 @@
     const pista = document.getElementById('pista');
     const anio = new Date().getFullYear();
     const saltos = [1, 5, 12, 20, 33, 51, null];
+    /* La misma foto, cada vez un poco más cerca; la última es de 1987 y tiene la misma cara */
     pista.innerHTML = saltos.map((s, i) => `
       <article class="resena">
-        <div class="resena-cara">${LB.caras.retrato('marta', { sonrisa: 0.35 + i * 0.17, vacio: s === null })}</div>
+        <div class="resena-cara">${s === null
+          ? '<img src="img/marta-1987.webp" alt="Foto antigua con la fecha 14 de marzo de 1987 impresa en la esquina: Marta delante de la casa 14, con la misma cara y la misma rebeca que hoy." width="1254" height="1254" loading="lazy" decoding="async">'
+          : `<img src="img/marta.webp" alt="Foto de Marta, sonriendo." width="1254" height="1254" loading="lazy" decoding="async" style="--cerca: ${(1 + i * 0.14).toFixed(2)}">`}</div>
         <p class="estrellas" aria-label="Cinco estrellas">★★★★★</p>
         <blockquote><p>${RESENAS[i]}</p></blockquote>
         <p class="firma">Marta G. · casa 14<br><time>${s === null ? '12 de marzo de —' : '12 de marzo de ' + (anio + s)}</time></p>
       </article>`).join('');
-    pista.querySelectorAll('.cara').forEach(c => LB.caras.parpadear(c, 0.6));
     if (calma) return;
     gsap.to(pista, {
       x: () => -(pista.scrollWidth - innerWidth + 2 * parseFloat(getComputedStyle(pista.parentElement).paddingLeft)),
@@ -64,35 +66,33 @@
     });
   }
 
-  /* Vecinos: te siguen con la mirada hasta que todos miran detrás de ti */
-  const VECINOS = [['marta', 'Marta'], ['joaquin', 'Joaquín'], ['lucia', 'Lucía'], ['ernesto', 'Ernesto'], ['pilar', 'Pilar'], ['javi', 'Javi']];
+  /* Vecinos: nueve fotos de carné que miran a la cámara, hasta que todos miran por encima de tu hombro.
+     Cada uno es un recorte de la misma rejilla (vecinos.webp / vecinos-detras.webp). */
+  const VECINOS = [['Amparo', 0, 0], ['Joaquín', 1, 0], ['Elena', 2, 0], ['Javi', 0, 1], ['Ernesto', 1, 1], ['Adrián', 2, 1], ['Pilar', 0, 2], ['Tomás', 1, 2], ['Maribel', 2, 2]];
+  const COL = ['-3.535%', '-108.333%', '-213.131%'], FIL = ['-3.535%', '-108.081%', '-212.879%'];
   function vecinos() {
     const ul = document.getElementById('rejilla-caras');
     const detras = document.getElementById('detras');
-    const pintar = (fase2) => {
-      ul.innerHTML = VECINOS.map(([id, nombre]) => `<li data-mira="vecino:${nombre}"><div class="vecino-cara">${LB.caras.retrato(id, fase2 ? { sonrisa: 1.25 } : {})}</div><p>${nombre} · casa 14</p></li>`).join('');
-      ul.querySelectorAll('.cara').forEach(c => { LB.caras.parpadear(c, 0.7); if (fase2) LB.caras.mirar(c, 0, 0, true); });
+    const foto = (src, clase) => `<img class="${clase}" src="img/${src}.webp" alt="" width="1254" height="1254" loading="lazy" decoding="async">`;
+    ul.innerHTML = VECINOS.map(([nombre, c, f]) => `<li data-mira="vecino:${nombre}"><div class="vecino-cara" style="--x: ${COL[c]}; --y: ${FIL[f]}">${foto('vecinos', 'mira-camara')}${foto('vecinos-detras', 'mira-detras')}</div><p>${nombre} · casa 14</p></li>`).join('');
+    const celdas = [...ul.children];
+    let fase2 = false, esperas = [];
+    /* Corte seco, cada uno a su tiempo (todos a la vez con movimiento reducido) */
+    const girar = (si) => {
+      esperas.forEach(clearTimeout); esperas = [];
+      celdas.forEach(li => {
+        const f = () => li.classList.toggle('mira', si);
+        if (calma) f(); else esperas.push(setTimeout(f, azar(0, 900)));
+      });
     };
-    pintar(false);
-    let fase2 = false;
-    const objetivo = { x: innerWidth / 2, y: innerHeight / 2 };
-    const mirarTodos = () => { if (!fase2) ul.querySelectorAll('.cara').forEach(c => LB.caras.mirar(c, objetivo.x, objetivo.y)); };
-    let pend = false;
-    const mover = (x, y) => {
-      objetivo.x = x; objetivo.y = y;
-      if (pend) return; pend = true;
-      requestAnimationFrame(() => { pend = false; mirarTodos(); });
-    };
-    addEventListener('pointermove', e => mover(e.clientX, e.clientY), { passive: true });
-    addEventListener('touchstart', e => mover(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
     ScrollTrigger.create({
       trigger: '.vecinos', start: 'top top', end: 'bottom bottom',
+      onEnter: () => LB.precargar(ul.querySelectorAll('.mira-detras')),
       onUpdate: s => {
-        if (tactil) mover(innerWidth / 2, innerHeight * (0.2 + s.progress * 0.8));
         const quiere = s.progress > 0.52;
         if (quiere !== fase2) {
           fase2 = quiere;
-          pintar(fase2);
+          girar(fase2);
           detras.classList.toggle('visible', fase2);
           if (fase2) LB.marta('detras', {}, { urgente: true, dura: 5000 });
         }
@@ -116,24 +116,7 @@
     });
   }
 
-  /* Cámaras que te siguen */
-  function domos() {
-    const lentes = [...document.querySelectorAll('.domo')].map(s => ({ s, l: s.querySelector('.lente') }));
-    const apuntar = (x, y) => lentes.forEach(({ s, l }) => {
-      const r = s.getBoundingClientRect();
-      const dx = x - (r.left + r.width / 2), dy = y - (r.top + r.height * 0.42);
-      const d = Math.hypot(dx, dy) || 1;
-      l.setAttribute('transform', `translate(${(dx / d * 15).toFixed(1)} ${clamp(dy / d * 12, -2, 12).toFixed(1)})`);
-    });
-    let pend = false;
-    const mover = (x, y) => { if (pend) return; pend = true; requestAnimationFrame(() => { pend = false; apuntar(x, y); }); };
-    addEventListener('pointermove', e => mover(e.clientX, e.clientY), { passive: true });
-    addEventListener('touchstart', e => mover(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
-    addEventListener('scroll', () => { if (tactil || !LB.puntero.movido) mover(innerWidth / 2, innerHeight * 0.9); }, { passive: true });
-  }
-
   /* Circuito cerrado: cuatro cámaras, una te enfoca a ti. Los rótulos de la 64 son tuyos y van en directo. */
-  const ruido = [];
   function rotulos(tipo, t) {
     if (tipo === 'pinar') return (t % 5600) < 1500 ? ['CAM 03 · PINAR', 'MOVIMIENTO'] : ['CAM 03 · PINAR'];
     if (tipo === 'salon') return ['CAM 07 · CASA 14 · SALÓN', 'PERSONAS: 5'];
@@ -146,116 +129,47 @@
     if (LB.quieto > 3000) l.push('SIN MOVIMIENTO ' + Math.floor(LB.quieto / 1000) + ' S');
     return l;
   }
-  function prepararRuido() {
-    for (let k = 0; k < 4; k++) {
-      const c = document.createElement('canvas'); c.width = 160; c.height = 120;
-      const x = c.getContext('2d'), img = x.createImageData(160, 120);
-      for (let i = 0; i < img.data.length; i += 4) { const v = Math.random() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
-      x.putImageData(img, 0, 0); ruido.push(c);
-    }
-  }
-  function figura(ctx, x, y, alto, color, ladeo) {
-    const a = alto, w = a * 0.11;
-    ctx.save(); ctx.translate(x, y); ctx.fillStyle = color; ctx.strokeStyle = color;
-    ctx.beginPath(); ctx.ellipse(ladeo * a * 0.05, -a * 0.94, w * 0.42, w * 0.56, ladeo, 0, Math.PI * 2); ctx.fill();
-    ctx.fillRect(-w / 2, -a * 0.86, w, a * 0.46);
-    ctx.lineWidth = w * 0.28; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(-w / 2, -a * 0.84); ctx.lineTo(-w * 0.9, -a * 0.2); ctx.moveTo(w / 2, -a * 0.84); ctx.lineTo(w * 0.95, -a * 0.18);
-    ctx.moveTo(-w * 0.25, -a * 0.42); ctx.lineTo(-w * 0.32, 0); ctx.moveTo(w * 0.25, -a * 0.42); ctx.lineTo(w * 0.3, 0); ctx.stroke();
-    ctx.restore();
-  }
-  const ESCENAS = {
-    pinar(ctx, w, h, t, c) {
-      ctx.fillStyle = '#1a221e'; ctx.fillRect(0, h * 0.62, w, h);
-      ctx.fillStyle = 'rgba(160,176,166,0.16)'; ctx.fillRect(0, h * 0.45, w, h * 0.16);
-      const ciclo = Math.floor(t / 5600), fase = t % 5600;
-      const tr = [0.06, 0.19, 0.3, 0.44, 0.57, 0.69, 0.83, 0.94];
-      if (fase < 1500) figura(ctx, w * tr[(ciclo * 3) % tr.length] + w * 0.06, h * (0.66 + Math.min(ciclo, 4) * 0.05), h * (0.32 + Math.min(ciclo, 4) * 0.1), 'rgba(205,214,204,0.78)', 0.25);
-      tr.forEach((x, i) => { ctx.fillStyle = i % 2 ? '#2b342f' : '#36403a'; ctx.fillRect(w * x, 0, w * (0.03 + (i % 3) * 0.02), h * 0.68); });
-    },
-    salon(ctx, w, h, t) {
-      ctx.fillStyle = '#26302b'; ctx.fillRect(0, 0, w, h * 0.66);
-      ctx.fillStyle = '#1b221f'; ctx.fillRect(0, h * 0.66, w, h);
-      ctx.fillStyle = '#7d8d84'; ctx.fillRect(w * 0.58, h * 0.16, w * 0.26, h * 0.34);
-      ctx.fillStyle = '#121714'; ctx.fillRect(w * 0.1, h * 0.52, w * 0.4, h * 0.2);
-      const paso = Math.floor(t / 4200) % 6;
-      if (paso < 5) figura(ctx, w * (0.86 - paso * 0.07), h * (0.7 + paso * 0.07), h * (0.42 + paso * 0.15), '#040605', 0.35 + paso * 0.1);
-    },
-    entrada(ctx, w, h, t) {
-      ctx.fillStyle = '#2b3530'; ctx.fillRect(0, h * 0.7, w, h);
-      ctx.fillStyle = '#56645c'; ctx.beginPath(); ctx.moveTo(w * 0.4, h * 0.7); ctx.lineTo(w * 0.6, h * 0.7); ctx.lineTo(w * 0.9, h); ctx.lineTo(w * 0.1, h); ctx.fill();
-      ctx.fillStyle = '#0c100e';
-      for (let i = 0; i < 14; i++) ctx.fillRect(w * (0.08 + i * 0.062), h * 0.24, w * 0.012, h * 0.5);
-      ctx.fillRect(w * 0.06, h * 0.24, w * 0.86, h * 0.025);
-      if (t % 7300 < 1100) {
-        ctx.fillStyle = 'rgba(214,220,210,0.85)';
-        [0.37, 0.56].forEach(x => { ctx.beginPath(); ctx.ellipse(w * x, h * 0.45, w * 0.022, h * 0.04, 0, 0, Math.PI * 2); ctx.fill(); for (let d = 0; d < 4; d++) ctx.fillRect(w * (x - 0.03), h * (0.4 + d * 0.022), w * 0.06, h * 0.012); });
-      }
-    },
-    tu(ctx, w, h, t, c) {
-      ctx.fillStyle = '#202925'; ctx.fillRect(0, 0, w, h);
-      ctx.fillStyle = '#151b18'; ctx.fillRect(0, h * 0.7, w, h);
-      ctx.fillStyle = '#a9bcb0'; ctx.fillRect(w * 0.34, h * 0.28, w * 0.32, h * 0.24);
-      ctx.fillStyle = '#e6e2d9'; ctx.fillRect(w * 0.36, h * 0.3, w * 0.13, h * 0.2);
-      ctx.fillStyle = '#5e7a6a'; ctx.fillRect(w * 0.5, h * 0.3, w * 0.14, h * 0.2);
-      ctx.fillStyle = '#2a2f2c'; ctx.fillRect(w * 0.47, h * 0.52, w * 0.06, h * 0.08); ctx.fillRect(w * 0.18, h * 0.6, w * 0.64, h * 0.05);
-      const p = c.presencia || 0;
-      if (p > 0.02) {
-        const salto = Math.floor(t / 125) % 7 === 0 ? 0.012 : 0;
-        ctx.globalAlpha = Math.min(1, p * 1.2);
-        figura(ctx, w * (0.68 + salto), h * 1.02, h * (0.9 + p * 0.25), '#030404', 0.5 + Math.sin(t / 900) * 0.05);
-        ctx.globalAlpha = 1;
-      }
-      ctx.fillStyle = '#070908';
-      ctx.beginPath(); ctx.ellipse(w * 0.5, h * 0.66, w * 0.07, h * 0.11, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(w * 0.28, h); ctx.quadraticCurveTo(w * 0.3, h * 0.76, w * 0.5, h * 0.75); ctx.quadraticCurveTo(w * 0.7, h * 0.76, w * 0.72, h); ctx.fill();
-    }
-  };
   function camaras() {
-    prepararRuido();
-    const lineas = document.createElement('canvas'); lineas.width = 4; lineas.height = 3;
-    const lx = lineas.getContext('2d'); lx.fillStyle = 'rgba(0,0,0,0.22)'; lx.fillRect(0, 0, 4, 1);
-    const cams = [...document.querySelectorAll('[data-cam]')].map(cv => ({ cv, ctx: cv.getContext('2d'), tipo: cv.dataset.cam, presencia: 0, sacudida: 0 }));
-    let patron = null;
-    const medir = () => cams.forEach(c => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
-      c.w = c.cv.width = Math.round(c.cv.clientWidth * dpr);
-      c.h = c.cv.height = Math.round(c.cv.clientHeight * dpr);
-    });
-    medir(); addEventListener('resize', medir);
-    ScrollTrigger.create({
-      trigger: '.seguridad', start: 'top 70%', end: 'bottom 30%',
-      onUpdate: s => { cams[3].presencia = calma ? (s.progress > 0.5 ? 1 : 0) : LB.tramo(s.progress, 0.15, 0.85); }
-    });
-    let visible = false, ultimo = 0;
-    new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(document.querySelector('.monitores'));
-    const pintar = (t) => {
-      requestAnimationFrame(pintar);
-      if (!visible || t - ultimo < (calma ? 1000 : 83)) return;
-      ultimo = t;
-      const d = new Date();
-      const sello = `${LB.dos(d.getDate())}-${LB.dos(d.getMonth() + 1)}-${d.getFullYear()} ${LB.dos(d.getHours())}:${LB.dos(d.getMinutes())}:${LB.dos(d.getSeconds())}`;
+    const caja = document.querySelector('.monitores');
+    const cams = [...caja.querySelectorAll('[data-cam]')].map(m => ({ m, tipo: m.dataset.cam, rotulo: m.querySelector('.osd-rotulo'), hora: m.querySelector('.osd-hora') }));
+    const tu = caja.querySelector('[data-cam="tu"]');
+    const d2 = LB.dos;
+    let visible = false, reloj = 0;
+    /* Rótulos y hora con segundos, una vez por segundo y solo mientras se ven */
+    const latir = () => {
+      const d = new Date(), t = performance.now();
+      const sello = `${d2(d.getDate())}-${d2(d.getMonth() + 1)}-${d.getFullYear()} ${d2(d.getHours())}:${d2(d.getMinutes())}:${d2(d.getSeconds())}`;
       cams.forEach(c => {
-        const { ctx, w, h } = c;
-        if (!w) return;
-        if (!patron) patron = ctx.createPattern(lineas, 'repeat');
-        ctx.save();
-        if (!calma && Math.random() < 0.012) c.sacudida = 3;
-        if (c.sacudida > 0) { ctx.translate(0, (Math.random() - 0.5) * h * 0.12); c.sacudida--; }
-        ESCENAS[c.tipo](ctx, w, h, t, c);
-        ctx.restore();
-        ctx.globalAlpha = 0.14; ctx.drawImage(ruido[Math.floor(Math.random() * 4)], 0, 0, w, h); ctx.globalAlpha = 1;
-        ctx.fillStyle = patron; ctx.fillRect(0, 0, w, h);
-        const fs = Math.max(11, Math.round(h * 0.058));
-        ctx.font = `${fs}px ui-monospace, Menlo, Consolas, monospace`;
-        ctx.fillStyle = '#d9e3d6';
-        rotulos(c.tipo, t).forEach((r, k) => ctx.fillText(r, fs * 0.8, fs * (1.6 + k * 1.3)));
-        const tw = ctx.measureText(sello).width;
-        ctx.fillText(sello, w - tw - fs * 0.8, h - fs * 0.8);
-        if (Math.floor(t / 1000) % 2 === 0) { ctx.fillStyle = '#c0281f'; ctx.beginPath(); ctx.arc(w - fs * 1.4, fs * 1.25, fs * 0.36, 0, Math.PI * 2); ctx.fill(); }
+        const txt = rotulos(c.tipo, t).join('\n');
+        if (c.rotulo.textContent !== txt) c.rotulo.textContent = txt;
+        c.hora.textContent = sello;
+        if (!calma && Math.random() < 0.035) { c.m.classList.add('salto'); setTimeout(() => c.m.classList.remove('salto'), 240); }
       });
+      reloj = visible ? setTimeout(latir, 1000 - new Date().getMilliseconds()) : 0;
     };
-    requestAnimationFrame(pintar);
+    latir();
+    new IntersectionObserver(es => {
+      visible = es[0].isIntersecting;
+      caja.classList.toggle('vivo', visible && !calma);
+      if (visible && !reloj) latir();
+    }, { rootMargin: '100px 0px' }).observe(caja);
+
+    /* La 64: la puerta de detrás está vacía hasta que avanzas (a la vez que el relé del sonido).
+       Si la cámara aún no se ve entera, espera a que se vea. */
+    let pasa = false, enVista = false, hecho = false;
+    const aparecer = () => {
+      if (hecho || !pasa || !enVista) return;
+      hecho = true;
+      if (calma) { tu.classList.add('aparece'); return; }
+      tu.classList.add('corte');
+      setTimeout(() => { tu.classList.add('aparece'); tu.classList.remove('corte'); }, 200);
+    };
+    new IntersectionObserver(es => { enVista = es[0].intersectionRatio >= 0.6; aparecer(); }, { threshold: [0, 0.6, 1] }).observe(tu);
+    ScrollTrigger.create({
+      trigger: '.seguridad', start: 'top 60%', end: 'bottom 30%',
+      onEnter: () => LB.precargar(tu.querySelectorAll('.cam-despues')),
+      onUpdate: s => { if (LB.tramo(s.progress, 0.15, 0.85) >= 0.5) { pasa = true; aparecer(); } }
+    });
   }
 
   /* La asesora saluda al entrar en el acto 2 (su cara se apaga en el CSS según el acto) */
@@ -281,7 +195,6 @@
     opiniones();
     vecinos();
     cero();
-    domos();
     camaras();
     asesora();
   };
