@@ -31,7 +31,7 @@ Lo único que guarda, también en tu navegador, es cuándo viniste por primera y
 <summary>Abrir solo si ya la has visto</summary>
 
 1. **La promoción.** Portada, lo que incluye la casa, cifras, la casa piloto por dentro, una vecina que la recomienda, precios, preguntas frecuentes y la reserva de la visita. Todo es creíble, salvo un detalle en cada sección que no debería estar ahí.
-2. **Algo no cuadra.** La web debería haber terminado y sigue. Las reseñas repiten la misma frase con la misma cara hasta que la frase se tuerce, los vecinos te siguen con la mirada, nadie se ha ido nunca y las cámaras de seguridad enfocan a quien está mirando la pantalla. Marta, la asesora, empieza a saber cosas de ti: cuánto llevas dentro, desde qué aparato miras, cuánta batería te queda, si te vas a otra pestaña o si vuelves a subir.
+2. **Algo no cuadra.** La web debería haber terminado y sigue. Las reseñas repiten la misma frase con la misma cara hasta que la frase se tuerce, los vecinos miran a la cámara hasta que todos miran a la vez por encima de tu hombro, nadie se ha ido nunca y las cámaras de seguridad enfocan a quien está mirando la pantalla. Marta, la asesora, empieza a saber cosas de ti: cuánto llevas dentro, desde qué aparato miras, cuánta batería te queda, si te vas a otra pestaña o si vuelves a subir.
 3. **Extraño de verdad.** La hora real, preguntas frecuentes que contestan con tus propios datos, las notas de voz que la familia anterior nunca llegó a enviar, dibujos del cuarto de los niños, carteles de los antiguos propietarios, una llamada al 112 en la que la operadora sabe más que quien llama, un contrato que se firma solo y alguien que respira contra el cristal.
 4. **Descenso.** La casa piloto a oscuras: un pasillo que se recorre con el scroll, voces que te piden que cuentes las puertas y te dicen la hora de tu reloj, puertas que no deberían ser tantas y algo al fondo que cada vez está más cerca.
 5. **Final.** No conviene contarlo.
@@ -45,7 +45,7 @@ python3 -m http.server 8000
 # http://localhost:8000
 ```
 
-Las imágenes se dibujan en el navegador. Los sonidos están en `audio/` (camas, efectos y voces, en MP3) y solo se descargan al encender el sonido. Usa GSAP y ScrollTrigger para las animaciones y la tipografía STIX Two Text.
+Las fotos están en `img/`, en WebP. Los sonidos están en `audio/` (camas, efectos y voces, en MP3) y solo se descargan al encender el sonido. Usa GSAP y ScrollTrigger para las animaciones y la tipografía STIX Two Text.
 
 ## Créditos de sonido
 

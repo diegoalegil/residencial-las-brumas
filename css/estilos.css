@@ -276,7 +276,6 @@ html[data-acto="4"] .asesora-cara img, html[data-acto="5"] .asesora-cara img { f
 @media (prefers-reduced-motion: reduce) {
   .estancias img, .escenario .vista, .asesora-cara img { transition: none; }
 }
-.cara .parpado { transform: translateY(-20px); }
 
 /* ======================= ACTO 2 ======================= */
 .acto-2 { background: #cbc6bd; }
