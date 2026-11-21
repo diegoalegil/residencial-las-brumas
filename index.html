@@ -371,8 +371,32 @@
   </section>
 </div>
 
+<!-- ACTOS 4 y 5 · Descenso y final -->
+<div class="oscuridad" id="oscuridad">
+  <div class="oscuridad-fijo">
+    <canvas id="pasillo" aria-hidden="true"></canvas>
+    <div class="susurros" id="susurros" aria-hidden="true"></div>
+    <p class="rotulo" id="rotulo">Casa piloto · planta alta · 03:00</p>
+    <p class="centro" id="centro" aria-live="polite"></p>
+  </div>
+  <div class="acto acto-4" data-acto="4">
+    <p class="sr-solo">La casa piloto a oscuras. Un pasillo largo con puertas a los lados. Las luces parpadean y al fondo hay algo de pie, cada vez más cerca.</p>
+  </div>
+  <div class="acto acto-5" data-acto="5">
+    <p class="sr-solo">La luz vuelve y el pasillo está vacío. Después la figura sale por la puerta del fondo, de miembros demasiado largos, y se acerca a tirones hasta tu cara. Negro. Ya estás dentro.</p>
+  </div>
+</div>
+
+<section class="bienvenido" id="bienvenido" aria-labelledby="titulo-bienvenido">
+  <h2 id="titulo-bienvenido" class="bienvenido-titulo">Bienvenido a casa.</h2>
+  <p class="trampa-texto" id="trampa-texto" aria-live="polite"></p>
+  <button class="salir" id="salir" type="button">Salir de Las Brumas</button>
+  <p class="aviso-ficcion">Residencial Las Brumas es una ficción. Ninguna casa, persona ni empresa de esta página existe.</p>
+</section>
+
 </main>
 
+<div class="velo" id="velo" aria-hidden="true"></div>
 <canvas class="rastro" id="rastro" aria-hidden="true"></canvas>
 <div class="grano" aria-hidden="true"></div>
 
@@ -392,6 +416,7 @@
 <script src="js/acto1.js"></script>
 <script src="js/acto2.js"></script>
 <script src="js/acto3.js"></script>
+<script src="js/descenso.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

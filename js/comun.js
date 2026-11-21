@@ -100,7 +100,7 @@
   let avisoQuieto = false, ultimoRapido = 0, ultimoTiempo = Date.now();
   setInterval(() => {
     if (performance.now() - tPrev > 250) velocidad *= 0.4;
-    if (acto < 2 || LB.silencio) return;
+    if (acto < 2 || acto >= 5 || LB.silencio) return;
     const ahora = Date.now();
     if (velocidad > 3800 && ahora - ultimoRapido > 25000) {
       ultimoRapido = ahora;
@@ -125,6 +125,12 @@
     try { localStorage.setItem(CLAVE, JSON.stringify({ ultima: Date.now(), final: true })); } catch (e) { /* sin almacenamiento */ }
   }
   const vuelve = !!visitaAnterior && (new Date(visitaAnterior.ultima).toDateString() !== new Date().toDateString() || Date.now() - visitaAnterior.ultima > 6 * 3600e3);
+
+  if (vuelve) {
+    raiz.classList.add('vuelve');
+    raiz.style.setProperty('--abre', '0.78');
+    raiz.style.setProperty('--luz', '#f0cf8a');
+  }
 
   window.LB = {
     raiz, calma, tactil, t0, clamp, lerp, azar, tramo, dos, puntero,
