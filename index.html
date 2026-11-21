@@ -291,18 +291,36 @@
   <section class="notas" id="notas" aria-labelledby="titulo-notas">
     <h2 id="titulo-notas">Notas de voz que nadie escuchó</h2>
     <p class="notas-intro">Encontradas en un teléfono, en el cajón de la cocina de la casa 14. Iban para la abuela. Ninguna llegó a enviarse. Transcripción literal.</p>
+    <img class="telefono-foto" src="img/telefono.webp" alt="Un móvil con la pantalla rota en el cajón de los cubiertos, entre gomas elásticas y pilas. En la pantalla hay una lista de notas de voz." width="1536" height="1024" loading="lazy" decoding="async">
     <div class="lista-notas" id="lista-notas"></div>
   </section>
 
   <section class="dibujos" id="dibujos" aria-labelledby="titulo-dibujos">
     <h2 id="titulo-dibujos">Encontrado en el cuarto de los niños</h2>
-    <div class="lamina-fila" id="laminas"></div>
+    <div class="lamina-fila" id="laminas">
+      <figure class="lamina" data-mira="lamina">
+        <div class="lamina-foto" style="--x: -1.2%; --y: -15.5%"><img src="img/dibujos.webp" alt="Dibujo a lápices de colores: una casa con el número 14 y una familia de cuatro cogida de la mano delante. Detrás de la casa hay una figura negra, más alta que el tejado, con los brazos muy largos." width="1536" height="1024" loading="lazy" decoding="async"></div>
+        <figcaption>«Esta es mi casa nueva. El de detrás ya estaba cuando llegamos.» Lucía, 6 años.</figcaption>
+      </figure>
+      <figure class="lamina" data-mira="lamina">
+        <div class="lamina-foto" style="--x: -103.2%; --y: -16.5%"><img src="img/dibujos.webp" alt="Dibujo a lápices de colores: un pasillo larguísimo con puertas numeradas del 1 al 13 a los dos lados y, al fondo, una puerta negra." width="1536" height="1024" loading="lazy" decoding="async"></div>
+        <figcaption>«No le gusta la luz. Cuando apagas, se hace más largo.» Lucía, 6 años.</figcaption>
+      </figure>
+      <figure class="lamina" data-mira="lamina">
+        <div class="lamina-foto" style="--x: -204.8%; --y: -17.5%"><img src="img/dibujos.webp" alt="Dibujo a lápices de colores: de noche, una niña en la cama, asustada, y una figura gris altísima a su lado que le pone la mano en la cabeza. Debajo pone «El señor alto me peina»." width="1536" height="1024" loading="lazy" decoding="async"></div>
+        <figcaption>«Papá no quiere que lo dibuje, pero si no lo dibujo se pone triste.» Lucía, 6 años.</figcaption>
+      </figure>
+    </div>
   </section>
 
   <section class="sebusca" id="sebusca" aria-labelledby="titulo-sebusca">
     <h2 id="titulo-sebusca">Antiguos propietarios</h2>
+    <img class="familias-foto" src="img/familias.webp" alt="Cuatro fotos antiguas, unas encima de otras: cuatro familias distintas posando delante de la casa 14, de épocas distintas. En una se lee la fecha 6 28 '96." width="1536" height="1024" loading="lazy" decoding="async">
     <div class="carteles" id="carteles"></div>
-    <p class="tablon" id="tablon"></p>
+    <div class="tablon-fila">
+      <img class="carteles-foto" src="img/carteles.webp" alt="Una farola junto a la entrada de la urbanización, en la niebla, forrada de carteles de «Desaparecido». El más nuevo es la imagen de una cámara: alguien de espaldas, sentado delante de una pantalla. Al fondo, el letrero de Residencial Las Brumas." width="1024" height="1536" loading="lazy" decoding="async">
+      <p class="tablon" id="tablon"></p>
+    </div>
   </section>
 
   <section class="llamada" id="llamada" aria-labelledby="titulo-llamada">
@@ -310,6 +328,7 @@
       <h2 id="titulo-llamada">Llamada al 112 · 19 de marzo · 03:00</h2>
       <ol class="transcripcion" id="transcripcion" aria-hidden="true"></ol>
       <ol class="sr-solo" id="transcripcion-sr"></ol>
+      <div class="llamada-fondo"><img src="img/policia.webp" alt="Después de la llamada: un coche patrulla con las luces azules encendidas y las dos puertas abiertas, vacío, delante de la casa 14. La puerta de la casa está abierta y en el camino hay una gorra tirada." width="1536" height="1024" loading="lazy" decoding="async"></div>
     </div>
   </section>
 
@@ -335,9 +354,12 @@
 
   <section class="cristal" id="cristal" aria-label="El cristal">
     <div class="cristal-fijo">
-      <canvas id="vaho" aria-hidden="true"></canvas>
+      <div class="cristal-foto">
+        <img src="img/cristal.webp" alt="" width="1024" height="1536" loading="lazy" decoding="async">
+        <canvas id="vaho" aria-hidden="true"></canvas>
+      </div>
       <p class="cristal-pie" id="cristal-pie">Alguien respiró contra el cristal. Desde dentro.</p>
-      <p class="sr-solo">En el vaho aparecen dos manos que empujan desde el otro lado y unas letras escritas al revés: no entres, ya es tarde.</p>
+      <p class="sr-solo">En el vaho aparecen dos manos de dedos demasiado largos que empujan desde el otro lado y unas letras escritas al revés: no entres, ya es tarde.</p>
     </div>
   </section>
 </div>

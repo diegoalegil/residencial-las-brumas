@@ -151,108 +151,21 @@
     });
   }
 
-  /* Dibujos a cera */
-  function garabato(r, puntos, j = 2.4, cerrar = false) {
-    const pts = cerrar ? puntos.concat([puntos[0]]) : puntos;
-    let d = `M${pts[0][0]} ${pts[0][1]}`;
-    for (let i = 1; i < pts.length; i++) {
-      const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
-      const pasos = Math.max(2, Math.round(Math.hypot(x1 - x0, y1 - y0) / 14));
-      for (let s = 1; s <= pasos; s++) {
-        const t = s / pasos;
-        d += ` L${(x0 + (x1 - x0) * t + (r() - 0.5) * j).toFixed(1)} ${(y0 + (y1 - y0) * t + (r() - 0.5) * j).toFixed(1)}`;
-      }
-    }
-    return d;
-  }
-  function circulo(cx, cy, rad, n = 12) { return Array.from({ length: n }, (_, i) => [cx + Math.cos(i / n * Math.PI * 2) * rad, cy + Math.sin(i / n * Math.PI * 2) * rad]); }
-  function trazo(r, pts, color, ancho = 4, cerrar = false) {
-    return `<path d="${garabato(r, pts, 2.6, cerrar)}" stroke="${color}" stroke-width="${ancho}" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".9"/><path d="${garabato(r, pts, 3.2, cerrar)}" stroke="${color}" stroke-width="${ancho * 0.6}" fill="none" stroke-linecap="round" opacity=".55"/>`;
-  }
-  function relleno(r, x0, y0, x1, y1, color, paso = 5) {
-    let d = '';
-    for (let y = y0; y < y1; y += paso) d += `M${x0 + r() * 3} ${y + r() * 2} L${x1 - r() * 3} ${y + paso * 0.6 + r() * 3} `;
-    return `<path d="${d}" stroke="${color}" stroke-width="${paso * 0.9}" stroke-linecap="round" fill="none" opacity=".92"/>`;
-  }
-  function monigote(r, x, suelo, alto, color, boca = 'recta') {
-    const cab = alto * 0.16, cy = suelo - alto + cab;
-    let s = trazo(r, circulo(x, cy, cab), color, 3.5, true);
-    s += trazo(r, [[x, cy + cab], [x, suelo - alto * 0.38]], color, 3.5);
-    s += trazo(r, [[x - alto * 0.24, suelo - alto * 0.62], [x, suelo - alto * 0.66], [x + alto * 0.24, suelo - alto * 0.62]], color, 3.5);
-    s += trazo(r, [[x - alto * 0.14, suelo], [x, suelo - alto * 0.38], [x + alto * 0.14, suelo]], color, 3.5);
-    s += `<circle cx="${x - cab * 0.35}" cy="${cy - cab * 0.1}" r="1.8" fill="${color}"/><circle cx="${x + cab * 0.35}" cy="${cy - cab * 0.1}" r="1.8" fill="${color}"/>`;
-    if (boca === 'recta') s += trazo(r, [[x - cab * 0.35, cy + cab * 0.45], [x + cab * 0.35, cy + cab * 0.45]], color, 2.2);
-    return s;
-  }
-  function alto(r, x, suelo, h, conBrazos = true) {
-    const cab = 16, cy = suelo - h + cab;
-    let s = relleno(r, x - 13, cy - 15, x + 13, cy + 16, '#141414', 4);
-    s += relleno(r, x - 12, cy + 16, x + 12, suelo - h * 0.32, '#141414', 4);
-    s += trazo(r, [[x - 8, suelo - h * 0.32], [x - 12, suelo]], '#141414', 6) + trazo(r, [[x + 8, suelo - h * 0.32], [x + 12, suelo]], '#141414', 6);
-    if (conBrazos) s += trazo(r, [[x - 12, cy + 24], [x - 30, suelo - h * 0.35], [x - 34, suelo - 4]], '#141414', 5) + trazo(r, [[x + 12, cy + 24], [x + 30, suelo - h * 0.35], [x + 34, suelo - 4]], '#141414', 5);
-    s += `<circle cx="${x - 5}" cy="${cy - 2}" r="2.6" fill="#fbf8f0"/><circle cx="${x + 5}" cy="${cy - 2}" r="2.6" fill="#fbf8f0"/>`;
-    s += trazo(r, [[x - 10, cy + 7], [x - 4, cy + 11], [x + 4, cy + 11], [x + 10, cy + 6]], '#c7271c', 3);
-    return s;
-  }
-  const NINO = `font-family="'Chalkboard SE','Comic Sans MS','Segoe Print',cursive"`;
-  const LAMINAS = [
-    ['Mi casa nueva', 'Esta es mi casa nueva. El de la ventana ya estaba cuando llegamos.', r => {
-      let s = '';
-      s += trazo(r, circulo(58, 54, 24), '#f2b705', 5, true) + relleno(r, 40, 36, 76, 72, '#f6c823', 6);
-      for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; s += trazo(r, [[58 + Math.cos(a) * 32, 54 + Math.sin(a) * 32], [58 + Math.cos(a) * 46, 54 + Math.sin(a) * 46]], '#f2b705', 4); }
-      s += trazo(r, [[10, 252], [120, 248], [260, 254], [392, 249]], '#3a9a3a', 6);
-      s += trazo(r, [[150, 122], [282, 122], [282, 250], [150, 250]], '#8b5a2b', 5, true);
-      s += trazo(r, [[140, 124], [216, 64], [292, 124]], '#d2452b', 6, true) + relleno(r, 176, 92, 256, 120, '#e0583d', 6);
-      s += trazo(r, [[202, 196], [232, 196], [232, 250], [202, 250]], '#8b5a2b', 4, true);
-      s += trazo(r, [[164, 140], [196, 140], [196, 172], [164, 172]], '#2f6fc0', 4, true);
-      s += relleno(r, 240, 140, 272, 172, '#141414', 4) + trazo(r, [[238, 138], [274, 138], [274, 174], [238, 174]], '#2f6fc0', 4, true);
-      s += `<circle cx="251" cy="152" r="2.6" fill="#fbf8f0"/><circle cx="261" cy="152" r="2.6" fill="#fbf8f0"/>`;
-      s += monigote(r, 36, 250, 92, '#2f6fc0') + monigote(r, 84, 250, 84, '#c7271c') + monigote(r, 312, 250, 58, '#8e3bb8') + monigote(r, 352, 250, 48, '#3a9a3a');
-      s += `<g ${NINO} font-size="15" fill="#333"><text x="24" y="276">papá</text><text x="66" y="276">mamá</text><text x="304" y="276">yo</text><text x="338" y="276">Dani</text><text x="132" y="34" font-size="20">MI CASA NUEVA</text></g>`;
-      return s;
-    }],
-    ['Mi amigo del pasillo', 'No le gusta la luz. Cuando apagas, se hace más largo.', r => {
-      let s = '';
-      s += trazo(r, [[0, 0], [150, 92]], '#6b4a2f', 4) + trazo(r, [[400, 0], [250, 92]], '#6b4a2f', 4) + trazo(r, [[0, 300], [150, 212]], '#6b4a2f', 4) + trazo(r, [[400, 300], [250, 212]], '#6b4a2f', 4);
-      s += trazo(r, [[150, 92], [250, 92], [250, 212], [150, 212]], '#6b4a2f', 4, true);
-      s += trazo(r, [[40, 60], [100, 98], [100, 214], [40, 252]], '#8b5a2b', 4, true) + trazo(r, [[360, 60], [300, 98], [300, 214], [360, 252]], '#8b5a2b', 4, true);
-      s += alto(r, 200, 210, 118);
-      s += monigote(r, 200, 292, 52, '#8e3bb8', 'nada');
-      s += `<g ${NINO} fill="#333"><text x="106" y="36" font-size="20">MI AMIGO DEL PASILLO</text><text x="262" y="282" font-size="14">NO LE GUSTA</text><text x="262" y="298" font-size="14">LA LUZ</text></g>`;
-      return s;
-    }],
-    ['Ya somos cinco', 'Papá no quiere que lo dibuje, pero si no lo dibujo se pone triste. Dejé sitio para el siguiente.', r => {
-      let s = '';
-      s += trazo(r, [[10, 262], [200, 258], [392, 263]], '#3a9a3a', 6);
-      s += trazo(r, [[300, 180], [370, 180], [370, 260], [300, 260]], '#8b5a2b', 4, true) + trazo(r, [[292, 182], [335, 146], [378, 182]], '#d2452b', 5, true);
-      s += monigote(r, 34, 260, 84, '#2f6fc0') + monigote(r, 78, 260, 78, '#c7271c') + monigote(r, 122, 260, 54, '#8e3bb8') + monigote(r, 158, 260, 44, '#3a9a3a');
-      s += alto(r, 222, 260, 236);
-      s += trazo(r, [[133, 228], [186, 222]], '#141414', 4);
-      s += `<g ${NINO} fill="#333"><text x="22" y="40" font-size="22">YA SOMOS 5</text></g>`;
-      return s;
-    }]
-  ];
-  function dibujos() {
-    const caja = document.getElementById('laminas');
-    caja.innerHTML = LAMINAS.map(([titulo, cita, f], i) => `
-      <figure class="lamina" data-mira="lamina">
-        <svg viewBox="0 0 400 300" role="img" aria-label="Dibujo infantil: ${titulo}"><rect width="400" height="300" fill="#fbf8f0"/>${f(semilla(11 + i))}</svg>
-        <figcaption>«${cita}» Lucía, 6 años.</figcaption>
-      </figure>`).join('');
-  }
-
-  /* Carteles de «Se busca» */
+  /* Carteles de «Se busca»: la foto de cada uno es un recorte en fotocopia (de su dibujo, en el caso de Lucía) */
   const CARTELES = [
-    ['lucia', '¿Has visto a Lucía?', '6 años. Casa 14. Desaparecida el 19 de marzo de 2025 con sus padres y su hermano Dani, de 3. Si la oyes llamarte desde el pinar, no contestes.'],
-    ['ernesto', 'Se busca', 'Ernesto B., 71 años. Casa 14. Salió con el perro por el pinar el 2 de noviembre de 2011. El perro volvió solo y no quiso entrar.'],
-    ['joaquin', 'Se busca', 'Joaquín M., 44 años. Casa 14. Visto por última vez el 12 de marzo de 1987, el día que les dieron las llaves. Su mujer, Marta, no lo ha denunciado: dice que sigue en casa.']
+    ['lucia', '¿Has visto a Lucía?', '6 años. Casa 14. Desaparecida el 19 de marzo de 2025 con sus padres y su hermano Dani, de 3. Si la oyes llamarte desde el pinar, no contestes.',
+      'dibujos', 1536, 1024, '426.667%', '-288.889%', '-80.556%', 'En lugar de una foto, un trozo de su dibujo: ella en la cama y una mano gris enorme sobre su cabeza.'],
+    ['ernesto', 'Se busca', 'Ernesto B., 71 años. Casa 14. Salió con el perro por el pinar el 2 de noviembre de 2011. El perro volvió solo y no quiso entrar.',
+      'vecinos', 1254, 1254, '316.667%', '-108.333%', '-108.081%', 'Foto de carné de Ernesto: un hombre mayor, calvo, con jersey oscuro.'],
+    ['joaquin', 'Se busca', 'Joaquín M., 44 años. Casa 14. Visto por última vez el 12 de marzo de 1987, el día que les dieron las llaves. Su mujer, Marta, no lo ha denunciado: dice que sigue en casa.',
+      'vecinos', 1254, 1254, '316.667%', '-108.333%', '-3.535%', 'Foto de carné de Joaquín: pelo rizado y cazadora de cuero.']
   ];
   function carteles() {
     const caja = document.getElementById('carteles');
-    caja.innerHTML = CARTELES.map(([id, tit, txt], i) => `
+    caja.innerHTML = CARTELES.map(([id, tit, txt, src, fw, fh, ancho, x, y, alt], i) => `
       <article class="cartel" data-mira="cartel:${id}" style="--giro:${[-3, 2.4, -1.4][i]}deg">
         <h3>${tit}</h3>
-        <div class="cartel-foto">${LB.caras.retrato(id, { raya: true, sonrisa: 0.3 })}</div>
+        <div class="cartel-foto"><img src="img/${src}.webp" alt="${esc(alt)}" width="${fw}" height="${fh}" loading="lazy" decoding="async" style="width: ${ancho}; left: ${x}; top: ${y}"></div>
         <p>${txt}</p>
         <div class="tiras" aria-hidden="true">${'<span>Casa 14</span>'.repeat(6)}</div>
       </article>`).join('');
@@ -276,8 +189,10 @@
         LB.avisa('lb:llamada', { indice: dichas, quien: l.quien, voz: l.voz, acotacion: l.acotacion || '', texto: l.texto, fin: !l.quien });
       }
     };
+    const seccion = document.querySelector('.llamada');
     if (calma) {
       lis.forEach(li => li.classList.add('vista'));
+      seccion.classList.add('final');
       ScrollTrigger.create({ trigger: '.llamada', start: 'top 60%', once: true, onEnter: () => anunciar(lis.length) });
       return;
     }
@@ -288,12 +203,15 @@
     };
     ScrollTrigger.create({
       trigger: '.llamada', start: 'top top', end: 'bottom bottom',
+      onEnter: () => LB.precargar('.llamada-fondo img'),
       onUpdate: st => {
-        const n = Math.floor(tramo(st.progress, 0.05, 0.9) * lis.length + 0.5);
+        const n = Math.floor(tramo(st.progress, 0.04, 0.76) * lis.length + 0.5);
         if (n === ultimo) return;
         ultimo = n;
         colocar(n);
         anunciar(n);
+        /* Cuando termina la transcripción, se ve dónde acabó: la patrulla vacía delante de la casa */
+        seccion.classList.toggle('final', n >= lis.length);
       }
     });
     addEventListener('resize', () => { if (ultimo >= 0) colocar(ultimo); });
@@ -321,7 +239,9 @@
     });
   }
 
-  /* El cristal: vaho, manos desde dentro, letras al revés */
+  /* El cristal (foto de cristal.webp): un velo de vaho encima que respira y se va abriendo.
+     Primero se lee «NO ENTRES» (al revés, de derecha a izquierda), luego golpean las dos manos
+     y al final alguien escribe «YA ES TARDE» con el dedo. Las posiciones son fracciones de la foto. */
   function cristal() {
     const pieCristal = document.getElementById('cristal-pie');
     if (pieCristal) pieCristal.textContent = tactil
@@ -329,90 +249,98 @@
       : 'Alguien respiró contra el cristal. Desde dentro. A la altura de tu cara.';
     const cv = document.getElementById('vaho');
     const ctx = cv.getContext('2d');
-    const capa = document.createElement('canvas');
-    const cx2 = capa.getContext('2d');
     const nube = document.createElement('canvas'); nube.width = nube.height = 256;
     const nx = nube.getContext('2d');
     const g = nx.createRadialGradient(128, 128, 0, 128, 128, 128);
-    g.addColorStop(0, 'rgba(214,219,212,0.62)'); g.addColorStop(0.55, 'rgba(214,219,212,0.25)'); g.addColorStop(1, 'rgba(214,219,212,0)');
+    g.addColorStop(0, 'rgba(178,184,176,0.55)'); g.addColorStop(0.55, 'rgba(178,184,176,0.22)'); g.addColorStop(1, 'rgba(178,184,176,0)');
     nx.fillStyle = g; nx.fillRect(0, 0, 256, 256);
     const r = semilla(5);
-    const manchas = Array.from({ length: 16 }, () => ({ x: (r() - 0.5) * 0.7, y: (r() - 0.5) * 0.5, s: 0.2 + r() * 0.2 }));
-    let w = 0, h = 0, p = 0, visible = false;
-    const manos = [{ x: 0.36, y: 0.54, umbral: 0.42, t: 0, giro: -0.16 }, { x: 0.65, y: 0.58, umbral: 0.54, t: 0, giro: 0.2 }];
+    const manchas = Array.from({ length: 12 }, () => ({ x: (r() - 0.5) * 0.8, y: (r() - 0.5) * 0.7, s: 0.22 + r() * 0.2 }));
+    const manos = [{ x: 0.245, y: 0.40, umbral: 0.42, t: 0 }, { x: 0.70, y: 0.40, umbral: 0.54, t: 0 }];
+    let w = 0, h = 0, p = 0, visible = false, pintado = '';
     const medir = () => {
       const dpr = Math.min(devicePixelRatio || 1, 1.5);
-      w = cv.width = capa.width = Math.round(cv.clientWidth * dpr);
-      h = cv.height = capa.height = Math.round(cv.clientHeight * dpr);
+      w = cv.width = Math.round(cv.clientWidth * dpr);
+      h = cv.height = Math.round(cv.clientHeight * dpr);
+      pintado = '';
     };
     medir(); addEventListener('resize', medir);
-    new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(cv);
+    new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) medir(); }).observe(cv);
     ScrollTrigger.create({
       trigger: '.cristal', start: 'top top', end: 'bottom bottom',
+      onEnter: () => LB.precargar('.cristal-foto img'),
       onUpdate: s => {
         p = s.progress;
         manos.forEach(m => {
           if (p > m.umbral && !m.t) { m.t = performance.now(); if (LB.golpe) LB.golpe(); }
           if (p < m.umbral - 0.04) m.t = 0;
         });
-        document.getElementById('cristal-pie').style.opacity = p < 0.3 ? 1 : 0;
+        pieCristal.style.opacity = p < 0.3 ? 1 : 0;
       }
     });
-    function mano(c, x, y, s, giro) {
-      c.save(); c.translate(x, y); c.rotate(giro); c.scale(s, s);
-      c.beginPath(); c.moveTo(-40, -6); c.bezierCurveTo(-46, 40, -30, 84, 0, 86); c.bezierCurveTo(32, 84, 44, 44, 40, -8); c.closePath(); c.fill();
-      c.beginPath(); c.ellipse(0, 10, 41, 30, 0, 0, Math.PI * 2); c.fill();
-      [[-31, -36, 9, 50, -0.16], [-11, -50, 9.5, 64, -0.04], [10, -52, 9.5, 66, 0.04], [29, -40, 8.5, 54, 0.14], [50, 34, 10, 46, 0.95]].forEach(([fx, fy, fw, fh, fr]) => {
-        c.save(); c.translate(fx, fy); c.rotate(fr); c.beginPath();
-        c.ellipse(0, 0, fw, fh / 2, 0, 0, Math.PI * 2); c.fill(); c.restore();
-      });
-      c.restore();
+    /* Hueco suave en el velo (destination-out) */
+    function hueco(cx, cy, rx, ry, fuerza) {
+      ctx.save(); ctx.translate(cx, cy); ctx.scale(rx, ry);
+      const gr = ctx.createRadialGradient(0, 0, 0, 0, 0, 1);
+      gr.addColorStop(0, `rgba(0,0,0,${fuerza})`); gr.addColorStop(0.45, `rgba(0,0,0,${fuerza * 0.75})`); gr.addColorStop(0.75, `rgba(0,0,0,${fuerza * 0.3})`); gr.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.arc(0, 0, 1, 0, Math.PI * 2); ctx.fill(); ctx.restore();
     }
-    function frase(c, texto, y, tam, avance) {
-      c.save();
-      c.translate(w / 2, y);
-      c.scale(-1, 1);
-      c.font = `600 ${tam}px "STIX Two Text", serif`;
-      c.textAlign = 'center'; c.textBaseline = 'middle';
-      const ancho = c.measureText(texto).width;
-      c.beginPath(); c.rect(-ancho / 2 - 10, -tam, (ancho + 20) * avance, tam * 2); c.clip();
-      c.lineWidth = tam * 0.07; c.lineJoin = 'round'; c.lineCap = 'round';
-      c.strokeText(texto, 0, 0); c.fillText(texto, 0, 0);
-      c.restore();
+    /* Letras escritas con el dedo desde dentro: se leen al revés y aparecen de derecha a izquierda */
+    function frase(texto, y, tam, avance) {
+      if (avance <= 0) return;
+      ctx.save();
+      ctx.translate(w / 2, y); ctx.scale(-1, 1);
+      ctx.font = `600 ${tam}px "STIX Two Text", serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const ancho = ctx.measureText(texto).width;
+      ctx.beginPath(); ctx.rect(-ancho / 2 - 10, -tam, (ancho + 20) * avance, tam * 2); ctx.clip();
+      ctx.lineWidth = tam * 0.06; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = tam * 0.12;
+      ctx.fillStyle = ctx.strokeStyle = 'rgba(8,10,9,0.62)';
+      ctx.strokeText(texto, 0, 0); ctx.fillText(texto, 0, 0);
+      ctx.restore();
     }
     const pintar = (t) => {
       requestAnimationFrame(pintar);
       if (!visible || !w) return;
+      /* Con movimiento reducido no respira y todo cambia por tramos: solo se repinta si algo cambia */
+      const clave = calma ? [w, h, p < 0.15, p < 0.4, p < 0.7, manos[0].t > 0, manos[1].t > 0].join() : '';
+      if (calma && clave === pintado) return;
+      pintado = clave;
       const resp = calma ? 0.6 : 0.5 - 0.5 * Math.cos(t / 1000 * Math.PI * 2 / 3.8);
-      const fuerza = 0.45 + 0.55 * resp;
-      cx2.globalCompositeOperation = 'source-over';
-      cx2.clearRect(0, 0, w, h);
-      const base = Math.min(w, h);
-      manchas.forEach(m => {
-        const rad = base * m.s * (0.95 + 0.3 * resp) * (0.85 + p * 0.45);
-        cx2.globalAlpha = fuerza;
-        cx2.drawImage(nube, w * (0.5 + m.x) - rad, h * (0.52 + m.y) - rad, rad * 2, rad * 2);
-      });
-      cx2.globalAlpha = 1;
-      cx2.globalCompositeOperation = 'destination-out';
-      cx2.fillStyle = '#000'; cx2.strokeStyle = '#000';
-      const tam = Math.min(w * 0.13, h * 0.16);
-      frase(cx2, 'NO ENTRES', h * 0.2, tam, calma ? (p > 0.15 ? 1 : 0) : tramo(p, 0.1, 0.36));
-      frase(cx2, 'YA ES TARDE', h * 0.86, tam, calma ? (p > 0.7 ? 1 : 0) : tramo(p, 0.66, 0.92));
-      const ahora = performance.now();
-      manos.forEach(m => { if (m.t) mano(cx2, w * m.x, h * m.y, base / 520 * 1.05, m.giro); });
+      const velo = calma ? (p < 0.4 ? 0.88 : p < 0.7 ? 0.62 : 0.4) : 0.92 - 0.57 * tramo(p, 0.05, 0.9);
       ctx.globalCompositeOperation = 'source-over';
-      ctx.fillStyle = '#030303'; ctx.fillRect(0, 0, w, h);
-      ctx.drawImage(capa, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = `rgba(4,5,5,${velo.toFixed(3)})`;
+      ctx.fillRect(0, 0, w, h);
+      const base = Math.min(w, h);
+      ctx.globalAlpha = 0.1 + 0.2 * resp;
+      manchas.forEach(m => {
+        const rad = base * m.s * (0.95 + 0.3 * resp) * (0.9 + p * 0.4);
+        ctx.drawImage(nube, w * (0.5 + m.x) - rad, h * (0.5 + m.y) - rad, rad * 2, rad * 2);
+      });
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'destination-out';
+      /* «NO ENTRES» de la foto: se despeja de derecha a izquierda */
+      const a = calma ? (p > 0.15 ? 1 : 0) : tramo(p, 0.1, 0.36);
+      if (a > 0) {
+        /* como un dedo que limpia: huecos suaves en fila, de x = 0,85 hacia la izquierda */
+        const n = Math.ceil(14 * a);
+        for (let k = 0; k < n; k++) {
+          const f = Math.min(1, 14 * a - k);
+          hueco(w * (0.85 - k * 0.05), h * 0.69, w * 0.075, h * 0.085, 0.8 * f);
+        }
+      }
+      /* Las manos: al golpear, el hueco se abre de golpe y se asienta (280 ms) */
+      const ahora = performance.now();
       manos.forEach(m => {
         if (!m.t) return;
         const e = calma ? 1 : Math.min(1, (ahora - m.t) / 280);
-        const esc = base / 520 * (1 + 0.14 * (1 - e * (2 - e)));
-        ctx.fillStyle = 'rgba(214,206,192,0.16)';
-        mano(ctx, w * m.x, h * m.y, esc, m.giro);
-        ctx.fillStyle = 'rgba(232,226,214,0.12)';
-        mano(ctx, w * m.x, h * m.y, esc * 0.8, m.giro);
+        const k = 1 + 0.14 * (1 - e * (2 - e));
+        hueco(w * m.x, h * m.y, w * 0.19 * k, h * 0.27 * k, 0.9);
       });
+      ctx.globalCompositeOperation = 'source-over';
+      frase('YA ES TARDE', h * 0.89, Math.min(w * 0.12, h * 0.07), calma ? (p > 0.7 ? 1 : 0) : tramo(p, 0.66, 0.92));
     };
     requestAnimationFrame(pintar);
   }
@@ -464,7 +392,6 @@
     hora();
     saben();
     notas();
-    dibujos();
     carteles();
     llamada();
     contrato();
