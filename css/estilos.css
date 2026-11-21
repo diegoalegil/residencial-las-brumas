@@ -319,3 +319,67 @@ button { font: inherit; color: inherit; }
   .estancias svg { transition: none; }
 }
 .cara .parpado { transform: translateY(-20px); }
+
+/* ======================= ACTO 2 ======================= */
+.acto-2 { background: #cbc6bd; }
+.w { display: inline-block; white-space: nowrap; }
+.l { display: inline-block; }
+.l.caida { transform: translateY(0.14em) rotate(6deg); }
+.gigante { font-size: var(--step-giant); line-height: 0.92; letter-spacing: -0.045em; max-width: 9ch; }
+
+.todavia { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: 18vh var(--margen); }
+.todavia-pie { margin-top: 40px; max-width: 34ch; font-size: var(--step-lead); }
+
+.opiniones { height: 380vh; }
+.opiniones-fijo { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 40px; padding: 0 var(--margen); }
+.opiniones h2, .vecinos h2, .seguridad h2 { font-size: clamp(2.6rem, 7vw, 7.5rem); line-height: 0.95; letter-spacing: -0.04em; }
+.pista { display: flex; gap: 20px; width: max-content; will-change: transform; }
+.resena { width: min(340px, 74vw); background: var(--papel); padding: 18px 18px 22px; }
+.resena-cara { aspect-ratio: 1; overflow: hidden; }
+.resena-cara svg { width: 100%; height: 100%; }
+.estrellas { margin-top: 14px; color: #a8761f; letter-spacing: 0.08em; }
+.resena blockquote { margin: 8px 0 0; }
+.resena blockquote p { font-size: var(--step-lead); line-height: 1.2; }
+.firma { margin-top: 14px; font-size: 15px; color: var(--muted); }
+.calma .opiniones { height: auto; }
+.calma .opiniones-fijo { position: static; height: auto; padding: 18vh var(--margen); }
+.calma .pista { flex-wrap: wrap; width: auto; }
+
+.vecinos { height: 300vh; background: #c2bdb3; }
+.vecinos-fijo { position: sticky; top: 0; min-height: 100svh; display: flex; flex-direction: column; justify-content: center; gap: 28px; padding: 40px var(--margen); }
+.rejilla-caras { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.vecino-cara { aspect-ratio: 3 / 4; overflow: hidden; }
+.vecino-cara svg { width: 100%; height: 100%; }
+.rejilla-caras p { margin-top: 8px; font-size: 15px; }
+.detras { font-size: var(--step-head); line-height: 1.05; letter-spacing: -0.03em; max-width: 22ch; opacity: 0; transform: translateY(16px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
+.detras.visible { opacity: 1; transform: none; }
+.calma .vecinos { height: auto; }
+.calma .vecinos-fijo { position: static; padding: 18vh var(--margen); }
+
+.cero { min-height: 120svh; padding: 18vh var(--margen); display: flex; flex-direction: column; justify-content: center; background: #1d1f1e; color: var(--papel); }
+.cero-etiqueta { font-size: var(--step-head); }
+.cero-numero { font-size: clamp(14rem, 46vw, 44rem); line-height: 0.8; font-weight: 600; letter-spacing: -0.06em; font-variant-numeric: tabular-nums; margin: 24px 0 40px -0.04em; }
+.cero-lineas div { display: grid; grid-template-columns: 64px 1fr; gap: 16px; align-items: baseline; }
+.cero-lineas div + div { margin-top: 14px; }
+.cero-lineas dt { font-size: var(--step-head); text-align: right; line-height: 1; }
+.cero-lineas dd { font-size: var(--step-lead); }
+
+.seguridad { padding: 20vh var(--margen); background: #cbc6bd; }
+.seguridad-texto { margin-top: 24px; font-size: var(--step-lead); max-width: 30ch; }
+.domos { display: flex; gap: clamp(16px, 6vw, 120px); margin: 64px 0 48px; }
+.domo { width: clamp(80px, 12vw, 180px); height: auto; }
+.led { animation: led 2s steps(1) infinite; }
+@keyframes led { 50% { opacity: 0.2; } }
+.monitores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; background: #0c0e0d; padding: 10px; max-width: 1100px; }
+.monitores canvas { width: 100%; aspect-ratio: 4 / 3; display: block; background: #111513; }
+
+@media (max-width: 820px) {
+  .opiniones-fijo { gap: 24px; }
+  .rejilla-caras { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+  .rejilla-caras p { font-size: 13px; }
+  .monitores { gap: 6px; padding: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .led { animation: none; }
+  .detras { transition: none; }
+}

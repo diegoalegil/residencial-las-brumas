@@ -257,6 +257,54 @@
   </footer>
 </div>
 
+<!-- ACTO 2 · Algo no cuadra -->
+<div class="acto acto-2" data-acto="2">
+  <section class="todavia" aria-label="Todavía estás aquí">
+    <p class="gigante" data-glitch>Todavía estás aquí.</p>
+    <p class="todavia-pie">La visita ha terminado. Puedes seguir mirando todo lo que quieras.</p>
+  </section>
+
+  <section class="opiniones" id="opiniones" aria-labelledby="titulo-opiniones">
+    <div class="opiniones-fijo">
+      <h2 id="titulo-opiniones" data-glitch>Opiniones de nuestros vecinos</h2>
+      <div class="pista" id="pista"></div>
+    </div>
+  </section>
+
+  <section class="vecinos" id="vecinos" aria-labelledby="titulo-vecinos">
+    <div class="vecinos-fijo">
+      <h2 id="titulo-vecinos" data-glitch>Conoce a tus vecinos</h2>
+      <ul class="rejilla-caras" id="rejilla-caras"></ul>
+      <p class="detras" id="detras">Todos miran al mismo sitio. Detrás de ti.</p>
+    </div>
+  </section>
+
+  <section class="cero" aria-labelledby="titulo-cero">
+    <h2 id="titulo-cero" class="cero-etiqueta">Vecinos que se han ido</h2>
+    <p class="cero-numero" id="cero-numero">0</p>
+    <dl class="cero-lineas">
+      <div><dt>6</dt><dd>familias han vivido en la casa 14.</dd></div>
+      <div><dt>6</dt><dd>familias siguen viviendo en la casa 14.</dd></div>
+    </dl>
+  </section>
+
+  <section class="seguridad" id="seguridad" aria-labelledby="titulo-seguridad">
+    <h2 id="titulo-seguridad" data-glitch>Seguridad 24 horas</h2>
+    <p class="seguridad-texto">64 cámaras. Ningún punto ciego. Tampoco el tuyo.</p>
+    <div class="domos" aria-hidden="true">
+      <svg class="domo" viewBox="0 0 120 100"><rect x="50" y="0" width="20" height="18" fill="#2b2d2c"/><rect x="18" y="16" width="84" height="10" fill="#e9e6df"/><path d="M22 26 A38 38 0 0 0 98 26Z" fill="#cdd1d0"/><g class="lente"><circle cx="60" cy="42" r="13" fill="#111"/><circle cx="60" cy="42" r="6" fill="#26313a"/><circle cx="63" cy="39" r="2" fill="#9ab0b8"/></g><circle class="led" cx="84" cy="32" r="2.4" fill="#b3261e"/></svg>
+      <svg class="domo" viewBox="0 0 120 100"><rect x="50" y="0" width="20" height="18" fill="#2b2d2c"/><rect x="18" y="16" width="84" height="10" fill="#e9e6df"/><path d="M22 26 A38 38 0 0 0 98 26Z" fill="#cdd1d0"/><g class="lente"><circle cx="60" cy="42" r="13" fill="#111"/><circle cx="60" cy="42" r="6" fill="#26313a"/><circle cx="63" cy="39" r="2" fill="#9ab0b8"/></g><circle class="led" cx="84" cy="32" r="2.4" fill="#b3261e"/></svg>
+      <svg class="domo" viewBox="0 0 120 100"><rect x="50" y="0" width="20" height="18" fill="#2b2d2c"/><rect x="18" y="16" width="84" height="10" fill="#e9e6df"/><path d="M22 26 A38 38 0 0 0 98 26Z" fill="#cdd1d0"/><g class="lente"><circle cx="60" cy="42" r="13" fill="#111"/><circle cx="60" cy="42" r="6" fill="#26313a"/><circle cx="63" cy="39" r="2" fill="#9ab0b8"/></g><circle class="led" cx="84" cy="32" r="2.4" fill="#b3261e"/></svg>
+    </div>
+    <div class="monitores" data-ui>
+      <canvas data-cam="pinar" role="img" aria-label="Cámara 3, el pinar de noche"></canvas>
+      <canvas data-cam="salon" role="img" aria-label="Cámara 7, el salón de la casa 14"></canvas>
+      <canvas data-cam="entrada" role="img" aria-label="Cámara 12, la verja de la entrada"></canvas>
+      <canvas data-cam="tu" role="img" aria-label="Cámara 64, una persona de espaldas frente a una pantalla"></canvas>
+    </div>
+  </section>
+</div>
+
 </main>
 
 <aside class="asesora" id="asesora" aria-live="polite" hidden>
@@ -273,6 +321,7 @@
 <script src="js/comun.js"></script>
 <script src="js/caras.js"></script>
 <script src="js/acto1.js"></script>
+<script src="js/acto2.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

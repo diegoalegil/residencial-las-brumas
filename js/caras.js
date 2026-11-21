@@ -38,9 +38,10 @@
         ${o.vacio ? '' : `<g class="pupila"><circle cx="${x}" cy="186" r="6.4" fill="${o.iris}"/><circle cx="${x}" cy="186" r="3.1" fill="#080808"/><circle cx="${x + 2}" cy="184" r="1.3" fill="#fff"/></g>`}
         <rect class="parpado" x="${x - 15}" y="176" width="30" height="20" fill="${o.piel}"/>
       </g>`).join('');
+    const arriba = 262 + k * 0.6, abajo = 280 + k * 3.2;
     const boca = `
-      <path d="M${150 - ancho} 252 Q150 ${260 + k} ${150 + ancho} 252 Q150 ${272 + k * 1.9} ${150 - ancho} 252Z" fill="#5e2522"/>
-      <path d="M${150 - ancho + 5} 253 Q150 ${260 + k} ${150 + ancho - 5} 253 Q150 ${265 + k * 1.1} ${150 - ancho + 5} 253Z" fill="#f2eee5"/>`;
+      <path d="M${150 - ancho} 252 Q150 ${arriba} ${150 + ancho} 252 Q150 ${abajo} ${150 - ancho} 252Z" fill="#5e2522"/>
+      <path d="M${150 - ancho + 5} 253 Q150 ${arriba} ${150 + ancho - 5} 253 Q150 ${arriba + 7 + k * 0.5} ${150 - ancho + 5} 253Z" fill="#f2eee5"/>`;
     const raya = o.raya ? `<g stroke="#0b0b0b" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.92">
       <path d="M82 140 L224 250 M90 260 L218 128 M78 196 L228 186 M96 120 L206 270 M70 230 L230 160 M120 110 L180 290 M100 290 L210 100"/>
       <path d="M86 170 C140 150 170 240 224 214 C190 250 110 230 86 170Z" stroke-width="4"/></g>` : '';

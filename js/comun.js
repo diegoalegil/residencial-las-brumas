@@ -4,6 +4,7 @@
   const calma = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const tactil = matchMedia('(hover: none), (pointer: coarse)').matches;
   const t0 = Date.now();
+  if (calma) raiz.classList.add('calma');
 
   const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
   const lerp = (a, b, t) => a + (b - a) * t;
